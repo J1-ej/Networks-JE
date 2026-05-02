@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Компьютерные сети за 30 дней · Backend & Security</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Unbounded:wght@400;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e14;--surface:#121920;--surface2:#1a2330;--surface3:#222f3e;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);--text:#e8f4ff;--muted:#7a9ab5;--dim:#3d5a73;--accent:#38bdf8;--accent-dim:rgba(56,189,248,0.12);--accent-border:rgba(56,189,248,0.3);--purple:#a78bfa;--purple-dim:rgba(167,139,250,0.12);--purple-border:rgba(167,139,250,0.3);--amber:#fbbf24;--amber-dim:rgba(251,191,36,0.12);--amber-border:rgba(251,191,36,0.3);--red:#f87171;--red-dim:rgba(248,113,113,0.12);--red-border:rgba(248,113,113,0.3);--radius:14px;--radius-sm:8px;--font:'Manrope',sans-serif;--font-display:'Unbounded',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.7;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:0.4}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(56,189,248,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.015) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.container{max-width:780px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+.header{padding:60px 0 40px;text-align:center}
+.header-badge{display:inline-flex;align-items:center;gap:8px;background:var(--accent-dim);border:1px solid var(--accent-border);border-radius:40px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--accent);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:28px}
+.header-badge span{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.5)}}
+.header h1{font-family:var(--font-display);font-size:clamp(26px,5.5vw,48px);font-weight:700;line-height:1.1;margin-bottom:16px;letter-spacing:-1px}
+.header h1 .accent{color:var(--accent)}
+.header p{color:var(--muted);font-size:16px;max-width:500px;margin:0 auto 28px}
+.header-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.htag{padding:5px 14px;border-radius:40px;font-size:12px;font-weight:600;border:1px solid}
+.htag-b{color:var(--accent);background:var(--accent-dim);border-color:var(--accent-border)}
+.htag-p{color:var(--purple);background:var(--purple-dim);border-color:var(--purple-border)}
+.htag-a{color:var(--amber);background:var(--amber-dim);border-color:var(--amber-border)}
+.htag-r{color:var(--red);background:var(--red-dim);border-color:var(--red-border)}
+.progress-section{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:20px 24px;margin-bottom:32px}
+.progress-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.progress-top span{font-size:13px;color:var(--muted)}.progress-top strong{font-size:18px;font-weight:700;color:var(--accent);font-family:var(--font-display)}
+.bar-track{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),#818cf8);border-radius:3px;transition:width 0.5s}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.stat{background:var(--surface2);border-radius:var(--radius-sm);padding:12px;text-align:center}
+.stat-val{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text)}.stat-label{font-size:11px;color:var(--muted);margin-top:2px}
+.week-nav{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:28px}
+.wnav{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 8px;cursor:pointer;text-align:center;transition:all 0.2s}
+.wnav:hover{border-color:var(--border2);background:var(--surface2)}
+.wnav.aw1{background:var(--accent-dim);border-color:var(--accent-border)}.wnav.aw1 .wn{color:var(--accent)}
+.wnav.aw2{background:var(--purple-dim);border-color:var(--purple-border)}.wnav.aw2 .wn{color:var(--purple)}
+.wnav.aw3{background:var(--amber-dim);border-color:var(--amber-border)}.wnav.aw3 .wn{color:var(--amber)}
+.wnav.aw4{background:var(--red-dim);border-color:var(--red-border)}.wnav.aw4 .wn{color:var(--red)}
+.wnav .wn{font-family:var(--font-display);font-size:20px;font-weight:700;display:block;margin-bottom:2px;color:var(--dim)}
+.wnav .wt{font-size:11px;color:var(--muted)}
+.week-section{display:none}.week-section.show{display:block}
+.week-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.week-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.w1 .week-icon{background:var(--accent-dim)}.w2 .week-icon{background:var(--purple-dim)}.w3 .week-icon{background:var(--amber-dim)}.w4 .week-icon{background:var(--red-dim)}
+.week-meta h2{font-family:var(--font-display);font-size:16px;font-weight:600}.week-meta p{font-size:12px;color:var(--muted);margin-top:2px}
+.day-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;transition:border-color 0.2s}
+.day-card:hover{border-color:var(--border2)}.day-card.done{border-color:rgba(56,189,248,0.4)}
+.day-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
+.day-num{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:12px;font-weight:700;flex-shrink:0}
+.w1 .day-num{background:var(--accent-dim);color:var(--accent)}.w2 .day-num{background:var(--purple-dim);color:var(--purple)}.w3 .day-num{background:var(--amber-dim);color:var(--amber)}.w4 .day-num{background:var(--red-dim);color:var(--red)}
+.day-title{font-size:14px;font-weight:600;flex:1}.day-check{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:all 0.2s}
+.day-card.done .day-check{background:var(--accent);border-color:var(--accent);color:#021825}
+.day-arrow{font-size:12px;color:var(--dim);transition:transform 0.2s;flex-shrink:0}
+.day-card.open .day-arrow{transform:rotate(90deg)}
+.day-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border)}.day-card.open .day-body{display:block}
+.section-row{margin-top:14px}.section-row label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px}
+.section-row p{font-size:13px;color:var(--muted);line-height:1.65}
+.code-block{background:#070c12;border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-top:8px;font-family:var(--font-mono);font-size:12px;line-height:1.75;overflow-x:auto}
+.code-block .cm{color:var(--dim)}.code-block .kw{color:#93c5fd;font-weight:600}.code-block .fn{color:#7dd3fc}.code-block .str{color:#6ee7b7}.code-block .num{color:#fbbf24}.code-block .hl{color:#38bdf8;font-weight:600}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pill{font-family:var(--font-mono);font-size:11px;padding:2px 8px;border-radius:4px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.tip{border:1px solid;border-radius:var(--radius-sm);padding:10px 14px;margin-top:10px}
+.tip-warn{background:var(--amber-dim);border-color:var(--amber-border)}.tip-warn .tip-label{color:var(--amber)}
+.tip-info{background:var(--accent-dim);border-color:var(--accent-border)}.tip-info .tip-label{color:var(--accent)}
+.tip-danger{background:var(--red-dim);border-color:var(--red-border)}.tip-danger .tip-label{color:var(--red)}
+.tip .tip-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.tip p{font-size:12px;line-height:1.6;color:var(--muted)}
+.answer-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-top:8px;overflow:hidden}
+.answer-toggle{padding:10px 14px;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:6px;user-select:none}
+.answer-toggle::before{content:'▶';font-size:9px;transition:transform 0.2s}.answer-toggle.open::before{transform:rotate(90deg)}
+.answer-content{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}.answer-content.show{display:block}
+.answer-content p{font-size:12px;color:var(--muted);line-height:1.65;margin-top:10px}
+.task-box{background:var(--surface2);border:1px solid var(--border);border-left:3px solid;border-radius:var(--radius-sm);padding:12px 14px;margin-top:10px}
+.w1 .task-box{border-left-color:var(--accent)}.w2 .task-box{border-left-color:var(--purple)}.w3 .task-box{border-left-color:var(--amber)}.w4 .task-box{border-left-color:var(--red)}
+.task-box .task-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.w1 .task-box .task-label{color:var(--accent)}.w2 .task-box .task-label{color:var(--purple)}.w3 .task-box .task-label{color:var(--amber)}.w4 .task-box .task-label{color:var(--red)}
+.task-box p{font-size:12px;color:var(--muted);line-height:1.6}
+.table-wrap{overflow-x:auto;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:var(--surface3);padding:8px 12px;text-align:left;font-weight:600;color:var(--text);border:1px solid var(--border2)}
+td{padding:7px 12px;border:1px solid var(--border);color:var(--muted)}
+tr:nth-child(even) td{background:var(--surface2)}
+.schema{background:#070c12;border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-top:8px;font-family:var(--font-mono);font-size:12px;line-height:1.9;color:var(--muted);overflow-x:auto}
+.schema .hl{color:var(--accent)}.schema .arrow{color:var(--amber)}.schema .label{color:#a78bfa}
+.mini-project{border-radius:var(--radius);padding:22px 24px;margin:20px 0;border:1px solid}
+.w1 .mini-project{background:var(--accent-dim);border-color:var(--accent-border)}.w2 .mini-project{background:var(--purple-dim);border-color:var(--purple-border)}.w3 .mini-project{background:var(--amber-dim);border-color:var(--amber-border)}.w4 .mini-project{background:var(--red-dim);border-color:var(--red-border)}
+.mp-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.w1 .mp-label{color:var(--accent)}.w2 .mp-label{color:var(--purple)}.w3 .mp-label{color:var(--amber)}.w4 .mp-label{color:var(--red)}
+.mini-project h3{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px}
+.mini-project p{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:10px}
+.checklist{list-style:none}.checklist li{font-size:13px;color:var(--muted);padding:4px 0;display:flex;gap:8px;align-items:flex-start}
+.w1 .checklist li::before{content:"▶";color:var(--accent);font-size:9px;margin-top:5px;flex-shrink:0}
+.w2 .checklist li::before{content:"▶";color:var(--purple);font-size:9px;margin-top:5px;flex-shrink:0}
+.w3 .checklist li::before{content:"▶";color:var(--amber);font-size:9px;margin-top:5px;flex-shrink:0}
+.w4 .checklist li::before{content:"▶";color:var(--red);font-size:9px;margin-top:5px;flex-shrink:0}
+.footer{text-align:center;padding:48px 0 32px;color:var(--dim);font-size:13px;border-top:1px solid var(--border);margin-top:40px}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+  <div class="header-badge"><span></span>Курс активен · 30 дней</div>
+  <h1>Компьютерные <span class="accent">сети</span></h1>
+  <p>Как данные путешествуют от браузера до сервера. OSI, TCP/IP, DNS, HTTP, Wireshark и защита трафика.</p>
+  <div class="header-tags">
+    <span class="htag htag-b">Backend</span>
+    <span class="htag htag-p">Cybersecurity</span>
+    <span class="htag htag-a">Wireshark</span>
+    <span class="htag htag-r">30 задач</span>
+  </div>
+</div>
+
+<div class="progress-section">
+  <div class="progress-top"><span>Общий прогресс</span><strong id="prog-val">0%</strong></div>
+  <div class="bar-track"><div class="bar-fill" id="bar" style="width:0%"></div></div>
+  <div class="stats-grid">
+    <div class="stat"><div class="stat-val" id="done-count">0</div><div class="stat-label">выполнено дней</div></div>
+    <div class="stat"><div class="stat-val">4</div><div class="stat-label">мини-проекта</div></div>
+    <div class="stat"><div class="stat-val">30</div><div class="stat-label">всего задач</div></div>
+  </div>
+</div>
+
+<div class="week-nav">
+  <div class="wnav aw1" onclick="showWeek(1)"><span class="wn">W1</span><span class="wt">OSI & IP</span></div>
+  <div class="wnav" onclick="showWeek(2)"><span class="wn">W2</span><span class="wt">DNS & HTTP</span></div>
+  <div class="wnav" onclick="showWeek(3)"><span class="wn">W3</span><span class="wt">Порты & SSH</span></div>
+  <div class="wnav" onclick="showWeek(4)"><span class="wn">W4</span><span class="wt">Wireshark & ИБ</span></div>
+</div>
+
+<!-- ═══════════ WEEK 1 ═══════════ -->
+<div id="week1" class="week-section w1 show">
+  <div class="week-header">
+    <div class="week-icon">🔌</div>
+    <div class="week-meta"><h2>Неделя 1 — Модель OSI и IP-адресация</h2><p>Дни 1–7 · Как устроена сеть · Мини-проект: Сетевой диагност</p></div>
+  </div>
+
+  <!-- D1 -->
+  <div class="day-card" id="d1">
+    <div class="day-head" onclick="toggleCard('d1')">
+      <div class="day-num">01</div><div class="day-title">Модель OSI — 7 уровней сети</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d1')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>Модель OSI (Open Systems Interconnection) — стандарт описания того, как данные передаются по сети. Состоит из 7 уровней. Каждый уровень отвечает за свою задачу и «общается» только со смежными уровнями. Твой Python-код работает на уровне 7, а физический кабель — на уровне 1.</p>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>#</th><th>Название</th><th>Протоколы</th><th>Устройства</th><th>Что делает</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--accent)">7</strong></td><td>Прикладной</td><td>HTTP, FTP, DNS, SMTP</td><td>Браузер, сервер</td><td>Интерфейс для приложений</td></tr>
+          <tr><td><strong style="color:var(--accent)">6</strong></td><td>Представления</td><td>SSL/TLS, JPEG, JSON</td><td>—</td><td>Шифрование, кодирование</td></tr>
+          <tr><td><strong style="color:var(--accent)">5</strong></td><td>Сеансовый</td><td>NetBIOS, RPC</td><td>—</td><td>Управление сессиями</td></tr>
+          <tr><td><strong style="color:var(--amber)">4</strong></td><td>Транспортный</td><td>TCP, UDP</td><td>—</td><td>Надёжная доставка</td></tr>
+          <tr><td><strong style="color:var(--amber)">3</strong></td><td>Сетевой</td><td>IP, ICMP, ARP</td><td>Роутер</td><td>Маршрутизация пакетов</td></tr>
+          <tr><td><strong style="color:var(--muted)">2</strong></td><td>Канальный</td><td>Ethernet, Wi-Fi</td><td>Коммутатор</td><td>Передача кадров</td></tr>
+          <tr><td><strong style="color:var(--muted)">1</strong></td><td>Физический</td><td>—</td><td>Кабель, Wi-Fi</td><td>Биты в сигнал</td></tr>
+        </tbody>
+      </table></div>
+      <div class="schema">
+<span class="label">Браузер</span> → [<span class="hl">7 HTTP</span>] → [<span class="hl">6 TLS</span>] → [<span class="hl">5 Сессия</span>] → [<span class="amber" style="color:var(--amber)">4 TCP</span>] → [<span class="amber" style="color:var(--amber)">3 IP</span>] → [2 Ethernet] → [1 Кабель]
+                                                           <span class="arrow">↓</span>
+<span class="label">Сервер</span>  → [<span class="hl">7 HTTP</span>] ← [<span class="hl">6 TLS</span>] ← [<span class="hl">5 Сессия</span>] ← [<span class="amber" style="color:var(--amber)">4 TCP</span>] ← [<span class="amber" style="color:var(--amber)">3 IP</span>] ← [2 Ethernet] ← [1 Кабель]</div>
+      <div class="tip tip-info"><div class="tip-label">💡 Мнемоника</div><p>«Привет Представлению Сети, Транспортный Сетевой Канал — Физика!» → П-П-С-Т-С-К-Ф (7→1). Или снизу: «Физики Каналят Сети Только Серьёзно Понимая Приложения».</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Составь таблицу «Уровень → Устройство → Протокол» по памяти без подглядывания. Определи на каком уровне OSI работает: а) ping б) HTTPS в) Wi-Fi адаптер г) твой Flask-сервер д) HTTP-куки?</p></div>
+      <div class="answer-box"><div class="answer-toggle" onclick="toggleAnswer(this)">Показать ответ</div><div class="answer-content"><p>а) ping (ICMP) → Уровень 3 (Сетевой)<br>б) HTTPS → Уровень 7 (Прикладной) + 6 (Представления — TLS)<br>в) Wi-Fi адаптер → Уровни 1–2 (Физический + Канальный)<br>г) Flask-сервер → Уровень 7 (Прикладной)<br>д) HTTP-куки → Уровень 7 (часть HTTP-протокола)</p></div></div>
+    </div>
+  </div>
+
+  <!-- D2 -->
+  <div class="day-card" id="d2">
+    <div class="day-head" onclick="toggleCard('d2')">
+      <div class="day-num">02</div><div class="day-title">TCP/IP и инкапсуляция данных</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d2')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>TCP/IP — реальный стек протоколов интернета (не теоретический как OSI). Состоит из 4 уровней. Инкапсуляция: каждый уровень добавляет свой заголовок к данным. На приёмной стороне заголовки снимаются обратно — декапсуляция.</p>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>TCP/IP уровень</th><th>Соответствие OSI</th><th>Протоколы</th><th>Единица данных</th></tr></thead>
+        <tbody>
+          <tr><td>Прикладной</td><td>5–6–7</td><td>HTTP, FTP, DNS, SMTP</td><td>Сообщение</td></tr>
+          <tr><td>Транспортный</td><td>4</td><td>TCP, UDP</td><td>Сегмент</td></tr>
+          <tr><td>Интернет</td><td>3</td><td>IP, ICMP</td><td>Пакет</td></tr>
+          <tr><td>Доступа к сети</td><td>1–2</td><td>Ethernet, Wi-Fi</td><td>Кадр</td></tr>
+        </tbody>
+      </table></div>
+      <div class="schema">
+<span class="label">Данные HTTP</span>: <span class="hl">"GET /index.html HTTP/1.1"</span>
+<span class="arrow">↓ +TCP заголовок</span>
+<span class="label">Сегмент TCP</span>: [порт отпр: 54321 | порт назн: 80 | seq | данные]
+<span class="arrow">↓ +IP заголовок</span>
+<span class="label">Пакет IP</span>: [IP src: 192.168.1.5 | IP dst: 93.184.216.34 | сегмент]
+<span class="arrow">↓ +Ethernet заголовок</span>
+<span class="label">Кадр Ethernet</span>: [MAC src | MAC dst | пакет | CRC]</div>
+      <div class="tip tip-warn"><div class="tip-label">⚠ Важно</div><p>TCP/IP и OSI — разные вещи. OSI — теоретическая эталонная модель. TCP/IP — реальный стек который используется в интернете. Знать оба нужно для собеседований.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Нарисуй схему прохождения пакета от твоего браузера до сервера google.com: покажи все уровни, какие заголовки добавляются на каждом, и как они снимаются на стороне сервера.</p></div>
+      <div class="answer-box"><div class="answer-toggle" onclick="toggleAnswer(this)">Показать ответ</div><div class="answer-content"><p>Браузер формирует HTTP-запрос → TCP добавляет порты (src≈50000+, dst=80/443) → IP добавляет адреса (твой IP + IP Google) → Ethernet добавляет MAC-адреса → физически уходит по кабелю/Wi-Fi → роутер провайдера снимает Ethernet, смотрит IP, добавляет новый Ethernet-кадр → ... → сервер Google получает кадр, снимает все заголовки, обрабатывает HTTP-запрос.</p></div></div>
+    </div>
+  </div>
+
+  <!-- D3 -->
+  <div class="day-card" id="d3">
+    <div class="day-head" onclick="toggleCard('d3')">
+      <div class="day-num">03</div><div class="day-title">IP-адресация: IPv4, публичные и локальные</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d3')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>IPv4-адрес — 32 бита, записываются как 4 числа от 0 до 255 через точку. Всего ~4,3 млрд адресов. Делятся на классы, публичные (видны в интернете) и приватные (только внутри сети).</p>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Диапазон</th><th>Тип</th><th>Назначение</th></tr></thead>
+        <tbody>
+          <tr><td>10.0.0.0 – 10.255.255.255</td><td>Приватный</td><td>Корпоративные сети</td></tr>
+          <tr><td>172.16.0.0 – 172.31.255.255</td><td>Приватный</td><td>Средние организации</td></tr>
+          <tr><td>192.168.0.0 – 192.168.255.255</td><td>Приватный</td><td>Домашние роутеры</td></tr>
+          <tr><td>127.0.0.0 – 127.255.255.255</td><td>Loopback</td><td>Сам себе (localhost)</td></tr>
+          <tr><td>Всё остальное</td><td>Публичный</td><td>Интернет</td></tr>
+        </tbody>
+      </table></div>
+      <div class="section-row"><label>Команды для диагностики</label>
+        <div class="code-block"><span class="cm"># Узнать свой IP (Linux/Mac)</span>
+ip addr show
+ifconfig | grep inet
+
+<span class="cm"># Windows</span>
+ipconfig /all
+
+<span class="cm"># Python: узнать локальный IP</span>
+<span class="kw">import</span> socket
+hostname = socket.gethostname()
+local_ip = socket.gethostbyname(hostname)
+<span class="fn">print</span>(<span class="str">f"Hostname: {hostname}"</span>)
+<span class="fn">print</span>(<span class="str">f"Local IP: {local_ip}"</span>)</div>
+      </div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Напиши Python-скрипт который: 1) выводит твой локальный IP, 2) определяет к какому классу (A/B/C) он относится, 3) проверяет является ли IP приватным или публичным.</p></div>
+      <div class="answer-box"><div class="answer-toggle" onclick="toggleAnswer(this)">Показать ответ</div><div class="answer-content">
+        <div class="code-block"><span class="kw">import</span> socket, ipaddress
+
+local_ip = socket.gethostbyname(socket.gethostname())
+ip = ipaddress.ip_address(local_ip)
+
+<span class="fn">print</span>(<span class="str">f"IP: {local_ip}"</span>)
+<span class="fn">print</span>(<span class="str">f"Приватный: {ip.is_private}"</span>)
+<span class="fn">print</span>(<span class="str">f"Loopback: {ip.is_loopback}"</span>)
+
+<span class="cm"># Определить класс</span>
+first_octet = <span class="fn">int</span>(local_ip.split(<span class="str">"."</span>)[<span class="num">0</span>])
+<span class="kw">if</span> first_octet <= <span class="num">127</span>: cls = <span class="str">"A"</span>
+<span class="kw">elif</span> first_octet <= <span class="num">191</span>: cls = <span class="str">"B"</span>
+<span class="kw">else</span>: cls = <span class="str">"C"</span>
+<span class="fn">print</span>(<span class="str">f"Класс: {cls}"</span>)</div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- D4 -->
+  <div class="day-card" id="d4">
+    <div class="day-head" onclick="toggleCard('d4')">
+      <div class="day-num">04</div><div class="day-title">Подсети, маски и CIDR-нотация</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d4')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>Маска подсети определяет какая часть IP-адреса — сеть, а какая — хост. CIDR (Classless Inter-Domain Routing) — современная запись: <code>192.168.1.0/24</code> означает 24 бита под сеть, 8 под хосты = 254 хоста.</p>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>CIDR</th><th>Маска</th><th>Хостов</th><th>Применение</th></tr></thead>
+        <tbody>
+          <tr><td>/8</td><td>255.0.0.0</td><td>16 777 214</td><td>Крупные ISP</td></tr>
+          <tr><td>/16</td><td>255.255.0.0</td><td>65 534</td><td>Крупные компании</td></tr>
+          <tr><td>/24</td><td>255.255.255.0</td><td>254</td><td>Малый офис, дом</td></tr>
+          <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>Связь двух роутеров</td></tr>
+          <tr><td>/32</td><td>255.255.255.255</td><td>1</td><td>Конкретный хост</td></tr>
+        </tbody>
+      </table></div>
+      <div class="code-block"><span class="kw">import</span> ipaddress
+
+net = ipaddress.ip_network(<span class="str">"192.168.1.0/24"</span>, strict=<span class="kw">False</span>)
+<span class="fn">print</span>(<span class="str">f"Сеть: {net.network_address}"</span>)         <span class="cm"># 192.168.1.0</span>
+<span class="fn">print</span>(<span class="str">f"Маска: {net.netmask}"</span>)               <span class="cm"># 255.255.255.0</span>
+<span class="fn">print</span>(<span class="str">f"Broadcast: {net.broadcast_address}"</span>) <span class="cm"># 192.168.1.255</span>
+<span class="fn">print</span>(<span class="str">f"Хостов: {net.num_addresses - 2}"</span>)    <span class="cm"># 254</span>
+
+<span class="cm"># Все IP в сети</span>
+<span class="kw">for</span> ip <span class="kw">in</span> <span class="fn">list</span>(net.hosts())[:<span class="num">5</span>]:
+    <span class="fn">print</span>(ip)</div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Для офиса нужно 50 хостов, для сервера — 1 адрес, для связи двух роутеров — 2 адреса. Подбери минимальную CIDR-маску для каждого случая. Напиши Python-скрипт для вычисления диапазона адресов сети 10.0.0.0/22.</p></div>
+      <div class="answer-box"><div class="answer-toggle" onclick="toggleAnswer(this)">Показать ответ</div><div class="answer-content"><p>50 хостов → /26 (62 хоста); 1 хост → /32; 2 хоста → /30. Для 10.0.0.0/22: сеть 10.0.0.0, broadcast 10.0.3.255, хостов 1022 (10.0.0.1 – 10.0.3.254).</p></div></div>
+    </div>
+  </div>
+
+  <!-- D5 -->
+  <div class="day-card" id="d5">
+    <div class="day-head" onclick="toggleCard('d5')">
+      <div class="day-num">05</div><div class="day-title">ICMP: ping, трассировка, диагностика</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d5')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>ICMP (Internet Control Message Protocol) — протокол сообщений об ошибках и диагностики. Работает на уровне 3. <code>ping</code> отправляет Echo Request и ждёт Echo Reply. Если ответа нет — хост недоступен или блокирует ICMP.</p>
+      </div>
+      <div class="section-row"><label>Команды</label>
+        <div class="code-block"><span class="cm"># Linux / Mac</span>
+ping -c 4 google.com          <span class="cm"># 4 пакета</span>
+ping -i 0.5 -s 1000 8.8.8.8  <span class="cm"># интервал 0.5с, размер 1000б</span>
+traceroute google.com         <span class="cm"># путь до цели</span>
+mtr google.com                <span class="cm"># live-трассировка</span>
+
+<span class="cm"># Windows</span>
+ping -n 4 google.com
+tracert google.com
+
+<span class="cm"># Python: запуск ping через subprocess</span>
+<span class="kw">import</span> subprocess, platform
+
+<span class="kw">def</span> <span class="fn">ping</span>(host):
+    flag = <span class="str">"-n"</span> <span class="kw">if</span> platform.system() == <span class="str">"Windows"</span> <span class="kw">else</span> <span class="str">"-c"</span>
+    result = subprocess.<span class="fn">run</span>([<span class="str">"ping"</span>, flag, <span class="str">"3"</span>, host],
+                              capture_output=<span class="kw">True</span>, text=<span class="kw">True</span>)
+    <span class="kw">return</span> result.returncode == <span class="num">0</span>
+
+<span class="kw">for</span> host <span class="kw">in</span> [<span class="str">"google.com"</span>, <span class="str">"8.8.8.8"</span>, <span class="str">"192.168.1.1"</span>]:
+    status = <span class="str">"✅ онлайн"</span> <span class="kw">if</span> <span class="fn">ping</span>(host) <span class="kw">else</span> <span class="str">"❌ недоступен"</span>
+    <span class="fn">print</span>(<span class="str">f"{host}: {status}"</span>)</div>
+      </div>
+      <div class="tip tip-warn"><div class="tip-label">⚠ Для специалиста ИБ</div><p>Многие файрволы блокируют ICMP. Если ping не работает — хост может быть всё равно онлайн. Проверяй через TCP-порты. Ещё: SYN-scan nmap не требует ICMP и часто проходит там, где ping заблокирован.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Напиши Python-скрипт который пингует 5 разных хостов (google.com, ya.ru, 8.8.8.8, 1.1.1.1, любой казахстанский сайт) и выводит отчёт: хост, статус, время ответа в мс.</p></div>
+      <div class="answer-box"><div class="answer-toggle" onclick="toggleAnswer(this)">Показать ответ</div><div class="answer-content">
+        <div class="code-block"><span class="kw">import</span> subprocess, re, time, platform
+
+hosts = [<span class="str">"google.com"</span>,<span class="str">"ya.ru"</span>,<span class="str">"8.8.8.8"</span>,<span class="str">"1.1.1.1"</span>,<span class="str">"kz.kz"</span>]
+flag = <span class="str">"-n"</span> <span class="kw">if</span> platform.system()==<span class="str">"Windows"</span> <span class="kw">else</span> <span class="str">"-c"</span>
+
+<span class="fn">print</span>(<span class="str">f"{'Хост':<20} {'Статус':<12} {'Задержка'}"</span>)
+<span class="fn">print</span>(<span class="str">"-"*45</span>)
+<span class="kw">for</span> h <span class="kw">in</span> hosts:
+    r = subprocess.<span class="fn">run</span>([<span class="str">"ping"</span>,flag,<span class="str">"3"</span>,h], capture_output=<span class="kw">True</span>, text=<span class="kw">True</span>)
+    ok = r.returncode == <span class="num">0</span>
+    ms = re.<span class="fn">search</span>(<span class="str">r"(?:avg|средн)[^\d]*(\d+\.?\d*)"</span>, r.stdout)
+    delay = <span class="str">f"{ms.group(1)} мс"</span> <span class="kw">if</span> ms <span class="kw">else</span> <span class="str">"—"</span>
+    <span class="fn">print</span>(<span class="str">f"{h:<20} {'✅ онлайн':<12} {delay}"</span> <span class="kw">if</span> ok <span class="kw">else</span> <span class="str">f"{h:<20} ❌ нет      —"</span>)</div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- D6 -->
+  <div class="day-card" id="d6">
+    <div class="day-head" onclick="toggleCard('d6')">
+      <div class="day-num">06</div><div class="day-title">Traceroute — путь пакета через интернет</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d6')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>Traceroute показывает каждый роутер (хоп) на пути пакета. Использует поле TTL (Time To Live) в IP-заголовке: каждый роутер уменьшает TTL на 1, при TTL=0 отправляет ICMP «Time Exceeded» обратно. Так traceroute узнаёт каждый шаг.</p>
+      </div>
+      <div class="schema"><span class="label">Как работает TTL:</span>
+Пакет TTL=1  → Роутер1 (TTL=0) → ICMP "Time Exceeded" → мы видим Роутер1
+Пакет TTL=2  → Роутер1 → Роутер2 (TTL=0) → ICMP → видим Роутер2
+Пакет TTL=3  → Роутер1 → Роутер2 → Роутер3 (TTL=0) → ...
+...
+Пакет TTL=N  → ... → Цель (ICMP Echo Reply) → путь пройден!</div>
+      <div class="code-block"><span class="cm"># Пример вывода traceroute до google.com из Алматы</span>
+<span class="cm"># traceroute google.com</span>
+ <span class="num">1</span>  192.168.1.1      <span class="num">1.2</span> ms   <span class="cm"># твой домашний роутер</span>
+ <span class="num">2</span>  10.10.1.1        <span class="num">8.3</span> ms   <span class="cm"># роутер провайдера</span>
+ <span class="num">3</span>  72.14.215.165    <span class="num">35.1</span> ms  <span class="cm"># Google (Алматы CDN)</span>
+ <span class="num">4</span>  142.250.79.100   <span class="num">36.8</span> ms  <span class="cm"># Google-сервер</span>
+
+<span class="cm"># Python: парсинг traceroute</span>
+<span class="kw">import</span> subprocess
+result = subprocess.<span class="fn">run</span>([<span class="str">"traceroute"</span>,<span class="str">"-n"</span>,<span class="str">"-m"</span>,<span class="str">"15"</span>,<span class="str">"google.com"</span>],
+                         capture_output=<span class="kw">True</span>, text=<span class="kw">True</span>)
+<span class="fn">print</span>(result.stdout)</div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Запусти traceroute до: google.com, ya.ru и любого казахстанского сайта. Сравни количество хопов и задержку. Запиши: через каких провайдеров проходит трафик? Найди хоп с наибольшей задержкой.</p></div>
+    </div>
+  </div>
+
+  <!-- D7 -->
+  <div class="day-card" id="d7">
+    <div class="day-head" onclick="toggleCard('d7')">
+      <div class="day-num">07</div><div class="day-title">ARP и MAC-адреса: как найти устройство в локальной сети</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d7')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>ARP (Address Resolution Protocol) — протокол второго уровня OSI. Решает задачу: у нас есть IP-адрес устройства в локальной сети, но нужен MAC-адрес для отправки кадра. ARP рассылает broadcast-запрос «кто имеет этот IP?» и получает MAC в ответ. Понимание ARP критично для диагностики сети и ИБ.</p>
+      </div>
+      <div class="code-block"><span class="cm"># ARP-кеш — таблица IP → MAC на твоей машине</span>
+<span class="prompt">$</span> arp -a                          <span class="cm"># все записи в кеше</span>
+<span class="prompt">$</span> arp -n                          <span class="cm"># без резолва имён (быстрее)</span>
+<span class="cm"># Пример вывода:</span>
+<span class="cm"># ? (192.168.1.1) at aa:bb:cc:dd:ee:ff [ether] on eth0  ← роутер</span>
+<span class="cm"># ? (192.168.1.5) at 11:22:33:44:55:66 [ether] on eth0  ← другой ПК</span>
+
+<span class="cm"># Как работает ARP:</span>
+<span class="cm"># 1. Твой ПК: "Кто имеет 192.168.1.1?" → широковещательный MAC ff:ff:ff:ff:ff:ff</span>
+<span class="cm"># 2. Роутер: "Это я! Мой MAC: aa:bb:cc:dd:ee:ff" → юникаст обратно</span>
+<span class="cm"># 3. Твой ПК записывает в ARP-кеш и отправляет данные</span>
+
+<span class="cm"># ip neigh — современная альтернатива arp -a</span>
+<span class="prompt">$</span> ip neigh show
+<span class="cm"># 192.168.1.1 dev eth0 lladdr aa:bb:cc:dd:ee:ff REACHABLE</span>
+
+<span class="cm"># MAC-адрес: структура</span>
+<span class="cm"># aa:bb:cc : dd:ee:ff</span>
+<span class="cm"># └── OUI (производитель) ─┘   └── уникальный номер ──┘</span>
+<span class="cm"># По OUI можно узнать производителя: maclookup.app</span>
+
+<span class="cm"># Python: получить свой MAC</span>
+<span class="kw">import</span> uuid, <span class="kw">re</span>
+mac = <span class="str">':'</span>.join(<span class="fn">re.findall</span>(<span class="str">'..'</span>, <span class="str">'%012x'</span> % uuid.getnode()))
+<span class="fn">print</span>(<span class="str">f"Мой MAC: {mac}"</span>)
+
+<span class="cm"># ARP-спуфинг (атака): злоумышленник рассылает фиктивные ARP-ответы</span>
+<span class="cm"># "Роутер 192.168.1.1 — это я!" → весь трафик идёт через атакующего</span>
+<span class="cm"># Защита: Dynamic ARP Inspection на управляемых коммутаторах</span></div>
+      <div class="tip tip-warn"><div class="tip-label">🔒 ARP-спуфинг — классика атак MITM</div><p>Именно через ARP-спуфинг работают многие атаки «человек посередине» в локальных сетях. Утилита <code>arpspoof</code> (пакет dsniff) позволяет перехватить трафик в локалке. Защита — статические ARP-записи или DAI на коммутаторе.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Выполни <code>arp -a</code> в своей сети — сколько устройств найдено? Определи производителей по MAC-OUI (первые 3 байта) через maclookup.app. Напиши Python-скрипт который выводит ARP-таблицу через subprocess. Найди MAC своего роутера и определи его производителя.</p></div>
+    </div>
+  </div>
+
+  <!-- MINI PROJECT W1 -->
+  <div class="mini-project">
+    <div class="mp-label">🏆 Мини-проект · День 7</div>
+    <h3>Сетевой диагност на Python</h3>
+    <p>Консольный инструмент для диагностики сети. Объедини всё из Недели 1.</p>
+    <ul class="checklist">
+      <li>Список хостов из файла <code>hosts.txt</code> (по одному на строку)</li>
+      <li>Для каждого: ping (статус + задержка) + проверка доступности порта 80</li>
+      <li>Вывод красивой таблицы с цветами (✅/❌) и временем проверки</li>
+      <li>Сохранение отчёта в <code>network_report.txt</code> с датой и временем</li>
+      <li>Бонус: запустить в бесконечном цикле, проверять каждые 60 секунд</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════ WEEK 2 ═══════════ -->
+<div id="week2" class="week-section w2">
+  <div class="week-header">
+    <div class="week-icon">🌐</div>
+    <div class="week-meta"><h2>Неделя 2 — DNS и веб-протоколы</h2><p>Дни 8–14 · DNS, HTTP/HTTPS, DevTools · Мини-проект: HTTP-клиент</p></div>
+  </div>
+
+  <!-- D8 -->
+  <div class="day-card" id="d8">
+    <div class="day-head" onclick="toggleCard('d8')">
+      <div class="day-num">08</div><div class="day-title">DNS: как домен превращается в IP</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d8')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>DNS (Domain Name System) — «телефонная книга» интернета. Переводит доменные имена в IP-адреса. Работает иерархически: Root DNS → TLD DNS (.com, .ru) → Authoritative DNS. Ответы кэшируются по TTL.</p>
+      </div>
+      <div class="schema"><span class="label">Процесс разрешения google.com:</span>
+Браузер → <span class="hl">Кэш браузера</span> → <span class="hl">Кэш ОС</span> → <span class="hl">Resolver (8.8.8.8)</span>
+                                                          <span class="arrow">↓</span>
+                                              <span class="hl">Root DNS</span> → кто отвечает за .com?
+                                                          <span class="arrow">↓</span>
+                                              <span class="hl">TLD .com DNS</span> → кто отвечает за google.com?
+                                                          <span class="arrow">↓</span>
+                                              <span class="hl">Google DNS</span> → google.com = 142.250.74.46</div>
+      <div class="code-block"><span class="cm"># Терминал: диагностика DNS</span>
+nslookup google.com          <span class="cm"># простой запрос</span>
+dig google.com               <span class="cm"># подробный ответ</span>
+dig google.com MX            <span class="cm"># почтовые серверы</span>
+dig +trace google.com        <span class="cm"># полная цепочка</span>
+
+<span class="cm"># Python: DNS-запрос</span>
+<span class="kw">import</span> socket
+ip = socket.<span class="fn">gethostbyname</span>(<span class="str">"google.com"</span>)
+<span class="fn">print</span>(<span class="str">f"google.com → {ip}"</span>)
+
+<span class="cm"># Все IP (CDN часто имеет несколько)</span>
+ips = socket.<span class="fn">getaddrinfo</span>(<span class="str">"google.com"</span>, <span class="num">80</span>)
+<span class="kw">for</span> info <span class="kw">in</span> ips:
+    <span class="fn">print</span>(info[<span class="num">4</span>][<span class="num">0</span>])</div>
+      <div class="tip tip-info"><div class="tip-label">🔒 ИБ: DNS-спуфинг</div><p>Атака «DNS spoofing» подменяет DNS-ответ: жертва вводит bank.com, а DNS возвращает IP злоумышленника. Защита: DNSSEC (подписи записей), DoH (DNS over HTTPS), DoT (DNS over TLS).</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Напиши скрипт: принимает список доменов, резолвит каждый в IP и выводит результат. Дополни: определи страну по IP через бесплатный API ipapi.co/json. Узнай MX-записи для gmail.com и mail.ru.</p></div>
+      <div class="answer-box"><div class="answer-toggle" onclick="toggleAnswer(this)">Показать ответ</div><div class="answer-content">
+        <div class="code-block"><span class="kw">import</span> socket, urllib.request, json
+
+domains = [<span class="str">"google.com"</span>, <span class="str">"github.com"</span>, <span class="str">"ya.ru"</span>]
+<span class="kw">for</span> domain <span class="kw">in</span> domains:
+    <span class="kw">try</span>:
+        ip = socket.<span class="fn">gethostbyname</span>(domain)
+        url = <span class="str">f"https://ipapi.co/{ip}/json/"</span>
+        data = json.<span class="fn">loads</span>(urllib.request.<span class="fn">urlopen</span>(url).read())
+        <span class="fn">print</span>(<span class="str">f"{domain} → {ip} ({data.get('country_name','?')})"</span>)
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        <span class="fn">print</span>(<span class="str">f"{domain} → ошибка: {e}"</span>)</div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- D9 -->
+  <div class="day-card" id="d9">
+    <div class="day-head" onclick="toggleCard('d9')">
+      <div class="day-num">09</div><div class="day-title">DNS-записи: A, AAAA, CNAME, MX, TXT, NS</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d9')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label><p>Каждый домен может иметь несколько типов DNS-записей. Бэкенд-разработчику важно знать их при настройке серверов, деплое и защите почты.</p></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Тип</th><th>Назначение</th><th>Пример</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--accent)">A</strong></td><td>Домен → IPv4</td><td>example.com → 93.184.216.34</td></tr>
+          <tr><td><strong style="color:var(--accent)">AAAA</strong></td><td>Домен → IPv6</td><td>example.com → 2606:2800::1</td></tr>
+          <tr><td><strong style="color:var(--purple)">CNAME</strong></td><td>Псевдоним домена</td><td>www → example.com</td></tr>
+          <tr><td><strong style="color:var(--purple)">MX</strong></td><td>Почтовый сервер</td><td>mail.example.com (priority 10)</td></tr>
+          <tr><td><strong style="color:var(--amber)">TXT</strong></td><td>Текст (SPF, DKIM)</td><td>v=spf1 include:google.com</td></tr>
+          <tr><td><strong style="color:var(--amber)">NS</strong></td><td>DNS-серверы зоны</td><td>ns1.example.com</td></tr>
+          <tr><td><strong style="color:var(--muted)">PTR</strong></td><td>IP → Домен (reverse)</td><td>34.216.184.93.in-addr.arpa</td></tr>
+        </tbody>
+      </table></div>
+      <div class="code-block"><span class="cm"># Проверка DNS-записей через dig</span>
+dig A google.com           <span class="cm"># IPv4</span>
+dig AAAA google.com        <span class="cm"># IPv6</span>
+dig MX gmail.com           <span class="cm"># почтовые серверы</span>
+dig TXT google.com         <span class="cm"># TXT (SPF, DKIM, верификации)</span>
+dig NS google.com          <span class="cm"># DNS-серверы</span>
+
+<span class="cm"># Python с библиотекой dnspython (pip install dnspython)</span>
+<span class="kw">import</span> dns.resolver
+<span class="kw">for</span> r <span class="kw">in</span> dns.resolver.<span class="fn">resolve</span>(<span class="str">"gmail.com"</span>, <span class="str">"MX"</span>):
+    <span class="fn">print</span>(<span class="str">f"Приоритет {r.preference}: {r.exchange}"</span>)</div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Найди через dig или nslookup: MX-записи gmail.com и mail.ru, TXT-запись google.com (найди SPF), NS-серверы ya.ru. Объясни что означает запись SPF в TXT и зачем она нужна для защиты от спама.</p></div>
+    </div>
+  </div>
+
+  <!-- D10 -->
+  <div class="day-card" id="d10">
+    <div class="day-head" onclick="toggleCard('d10')">
+      <div class="day-num">10</div><div class="day-title">HTTP: структура запроса и ответа</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d10')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>HTTP (HyperText Transfer Protocol) — протокол прикладного уровня для передачи данных. Текстовый (до HTTP/2). Состоит из: стартовой строки, заголовков и тела. Клиент делает запрос — сервер отвечает.</p>
+      </div>
+      <div class="schema"><span class="label">HTTP Запрос:</span>
+<span class="hl">GET</span> /api/users?page=1 <span class="hl">HTTP/1.1</span>
+Host: api.example.com
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
+Content-Type: application/json
+User-Agent: Mozilla/5.0 (Linux; Android 13)
+Accept-Encoding: gzip, deflate, br
+
+<span class="label">HTTP Ответ:</span>
+<span class="hl">HTTP/1.1 200 OK</span>
+Content-Type: application/json; charset=utf-8
+Content-Length: 342
+Cache-Control: max-age=3600
+X-RateLimit-Remaining: 98
+
+{"users": [{"id": 1, "name": "Алишер"}]}</div>
+      <div class="tip tip-info"><div class="tip-label">💡 Связь с backend</div><p>Когда ты пишешь Flask/FastAPI-роут — ты программируешь именно обработку HTTP-запроса. Параметры URL → query string, данные формы → body, авторизация → заголовок Authorization.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Открой DevTools (F12) → Network. Перейди на любой сайт. Найди и опиши: 1) GET-запрос главной страницы, 2) Content-Type ответа, 3) статус-код, 4) заголовок Server, 5) любой заголовок безопасности (X-Frame-Options, CSP, HSTS).</p></div>
+    </div>
+  </div>
+
+  <!-- D11 -->
+  <div class="day-card" id="d11">
+    <div class="day-head" onclick="toggleCard('d11')">
+      <div class="day-num">11</div><div class="day-title">HTTP-методы: GET, POST, PUT, DELETE, PATCH</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d11')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>Метод</th><th>Действие</th><th>Тело</th><th>Идемпотентный</th><th>Пример</th></tr></thead>
+        <tbody>
+          <tr><td><strong style="color:var(--accent)">GET</strong></td><td>Получить данные</td><td>Нет</td><td>✅ Да</td><td>GET /users/1</td></tr>
+          <tr><td><strong style="color:var(--purple)">POST</strong></td><td>Создать ресурс</td><td>Да</td><td>❌ Нет</td><td>POST /users</td></tr>
+          <tr><td><strong style="color:var(--amber)">PUT</strong></td><td>Заменить ресурс</td><td>Да</td><td>✅ Да</td><td>PUT /users/1</td></tr>
+          <tr><td><strong style="color:var(--amber)">PATCH</strong></td><td>Частично обновить</td><td>Да</td><td>Зависит</td><td>PATCH /users/1</td></tr>
+          <tr><td><strong style="color:var(--red)">DELETE</strong></td><td>Удалить ресурс</td><td>Нет</td><td>✅ Да</td><td>DELETE /users/1</td></tr>
+          <tr><td>HEAD</td><td>Только заголовки</td><td>Нет</td><td>✅ Да</td><td>HEAD /file.zip</td></tr>
+          <tr><td>OPTIONS</td><td>Разрешённые методы</td><td>Нет</td><td>✅ Да</td><td>OPTIONS /api</td></tr>
+        </tbody>
+      </table></div>
+      <div class="code-block"><span class="cm"># Python: отправка разных методов через requests</span>
+<span class="kw">import</span> requests
+
+<span class="cm"># GET: получить пользователей</span>
+r = requests.<span class="fn">get</span>(<span class="str">"https://jsonplaceholder.typicode.com/users"</span>)
+<span class="fn">print</span>(r.status_code, r.json()[<span class="num">0</span>][<span class="str">"name"</span>])
+
+<span class="cm"># POST: создать пост</span>
+r = requests.<span class="fn">post</span>(<span class="str">"https://jsonplaceholder.typicode.com/posts"</span>,
+    json={<span class="str">"title"</span>:<span class="str">"Test"</span>, <span class="str">"body"</span>:<span class="str">"Hello"</span>, <span class="str">"userId"</span>:<span class="num">1</span>})
+<span class="fn">print</span>(r.status_code, r.json()[<span class="str">"id"</span>])
+
+<span class="cm"># DELETE</span>
+r = requests.<span class="fn">delete</span>(<span class="str">"https://jsonplaceholder.typicode.com/posts/1"</span>)
+<span class="fn">print</span>(r.status_code)  <span class="cm"># 200</span></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Используй бесплатное API <code>jsonplaceholder.typicode.com</code>: выполни GET всех постов, POST нового поста, PUT обновление поста, DELETE удаление. Для каждого запроса выведи статус-код и первые 100 символов ответа.</p></div>
+    </div>
+  </div>
+
+  <!-- D12 -->
+  <div class="day-card" id="d12">
+    <div class="day-head" onclick="toggleCard('d12')">
+      <div class="day-num">12</div><div class="day-title">Коды ответов HTTP: 1xx, 2xx, 3xx, 4xx, 5xx</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d12')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>Код</th><th>Название</th><th>Когда возникает</th></tr></thead>
+        <tbody>
+          <tr><td><strong>200</strong></td><td>OK</td><td>Запрос выполнен успешно</td></tr>
+          <tr><td><strong>201</strong></td><td>Created</td><td>Ресурс создан (ответ на POST)</td></tr>
+          <tr><td><strong>204</strong></td><td>No Content</td><td>Успех, нет тела (DELETE)</td></tr>
+          <tr><td><strong style="color:var(--amber)">301</strong></td><td>Moved Permanently</td><td>Постоянный редирект</td></tr>
+          <tr><td><strong style="color:var(--amber)">302</strong></td><td>Found</td><td>Временный редирект</td></tr>
+          <tr><td><strong style="color:var(--amber)">304</strong></td><td>Not Modified</td><td>Кэш актуален</td></tr>
+          <tr><td><strong style="color:var(--red)">400</strong></td><td>Bad Request</td><td>Ошибка в запросе клиента</td></tr>
+          <tr><td><strong style="color:var(--red)">401</strong></td><td>Unauthorized</td><td>Не авторизован</td></tr>
+          <tr><td><strong style="color:var(--red)">403</strong></td><td>Forbidden</td><td>Нет доступа</td></tr>
+          <tr><td><strong style="color:var(--red)">404</strong></td><td>Not Found</td><td>Ресурс не существует</td></tr>
+          <tr><td><strong style="color:var(--red)">429</strong></td><td>Too Many Requests</td><td>Rate limiting</td></tr>
+          <tr><td><strong style="color:var(--red)">500</strong></td><td>Internal Server Error</td><td>Ошибка на сервере</td></tr>
+          <tr><td><strong style="color:var(--red)">502</strong></td><td>Bad Gateway</td><td>Ошибка прокси/nginx</td></tr>
+          <tr><td><strong style="color:var(--red)">503</strong></td><td>Service Unavailable</td><td>Сервер перегружен</td></tr>
+        </tbody>
+      </table></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Напиши Python-функцию <code>check_url(url)</code> которая делает HEAD-запрос и возвращает статус + расшифровку. Протестируй на 5 разных URL включая несуществующий.</p></div>
+      <div class="answer-box"><div class="answer-toggle" onclick="toggleAnswer(this)">Показать ответ</div><div class="answer-content">
+        <div class="code-block"><span class="kw">import</span> requests
+
+STATUS = {<span class="num">200</span>:<span class="str">"OK"</span>,<span class="num">301</span>:<span class="str">"Redirect"</span>,<span class="num">404</span>:<span class="str">"Not Found"</span>,<span class="num">500</span>:<span class="str">"Server Error"</span>}
+
+<span class="kw">def</span> <span class="fn">check_url</span>(url):
+    <span class="kw">try</span>:
+        r = requests.<span class="fn">head</span>(url, timeout=<span class="num">5</span>, allow_redirects=<span class="kw">True</span>)
+        desc = STATUS.get(r.status_code, <span class="str">"Другой код"</span>)
+        <span class="kw">return</span> <span class="str">f"{r.status_code} {desc} | {r.headers.get('Server','?')}"</span>
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        <span class="kw">return</span> <span class="str">f"Ошибка: {e}"</span>
+
+urls = [<span class="str">"https://google.com"</span>, <span class="str">"https://github.com"</span>, <span class="str">"https://example.com/404"</span>]
+<span class="kw">for</span> url <span class="kw">in</span> urls:
+    <span class="fn">print</span>(<span class="str">f"{url[:30]:32} → {check_url(url)}"</span>)</div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- D13 -->
+  <div class="day-card" id="d13">
+    <div class="day-head" onclick="toggleCard('d13')">
+      <div class="day-num">13</div><div class="day-title">HTTPS, SSL/TLS и сертификаты</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d13')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>HTTPS = HTTP + TLS-шифрование. TLS (Transport Layer Security) — протокол шифрования. Защищает от: перехвата трафика (MITM), подмены сервера, изменения данных. Использует асимметричное шифрование для обмена ключами, симметричное — для данных.</p>
+      </div>
+      <div class="schema"><span class="label">TLS Handshake (упрощённо):</span>
+Клиент → <span class="hl">ClientHello</span> (версии TLS, cipher suites) → Сервер
+Сервер → <span class="hl">ServerHello</span> + Сертификат (публичный ключ) → Клиент
+Клиент → Проверяет сертификат у CA (Let's Encrypt, DigiCert)
+Клиент → <span class="hl">PreMasterSecret</span> (зашифровано публичным ключом) → Сервер
+Оба → вычисляют <span class="hl">SessionKey</span> (симметричный)
+<span class="arrow">→ Дальше все данные шифруются симметрично (AES-256)</span></div>
+      <div class="code-block"><span class="cm"># Python: проверка SSL-сертификата</span>
+<span class="kw">import</span> ssl, socket
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="kw">def</span> <span class="fn">check_ssl</span>(hostname):
+    ctx = ssl.<span class="fn">create_default_context</span>()
+    <span class="kw">with</span> ctx.<span class="fn">wrap_socket</span>(socket.<span class="fn">socket</span>(), server_hostname=hostname) <span class="kw">as</span> s:
+        s.<span class="fn">connect</span>((hostname, <span class="num">443</span>))
+        cert = s.<span class="fn">getpeercert</span>()
+    expires = datetime.<span class="fn">strptime</span>(cert[<span class="str">"notAfter"</span>], <span class="str">"%b %d %H:%M:%S %Y %Z"</span>)
+    days = (expires - datetime.<span class="fn">now</span>()).days
+    <span class="fn">print</span>(<span class="str">f"{hostname}: истекает {expires.date()} (через {days} дней)"</span>)
+    <span class="fn">print</span>(<span class="str">f"Выдан: {cert['issuer']}"</span>)
+
+<span class="fn">check_ssl</span>(<span class="str">"google.com"</span>)
+<span class="fn">check_ssl</span>(<span class="str">"github.com"</span>)</div>
+      <div class="tip tip-danger"><div class="tip-label">🔒 Атака MITM</div><p>При перехвате трафика злоумышленник ставит себя между клиентом и сервером. HSTS (HTTP Strict Transport Security) защищает: браузер всегда использует HTTPS и отклоняет поддельные сертификаты.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Напиши скрипт который проверяет SSL-сертификаты для 5 сайтов и предупреждает если до истечения осталось менее 30 дней. Найди дату истечения SSL у своего любимого сайта через браузер (клик на замок).</p></div>
+    </div>
+  </div>
+
+  <!-- D14 -->
+  <div class="day-card" id="d14">
+    <div class="day-head" onclick="toggleCard('d14')">
+      <div class="day-num">14</div><div class="day-title">Заголовки безопасности HTTP и CORS</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d14')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>HTTP-заголовки безопасности — первая линия обороны веб-приложения. Они инструктируют браузер: какой контент разрешён, куда можно делать запросы, как кешировать. CORS (Cross-Origin Resource Sharing) контролирует доступ с других доменов. Неправильная настройка — прямой путь к XSS, кликджекингу и CSRF.</p>
+      </div>
+      <div class="code-block"><span class="cm"># Ключевые заголовки безопасности:</span>
+
+<span class="cm"># HSTS — браузер всегда использует HTTPS, даже если ввели http://</span>
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+<span class="cm"># CSP — разрешает только указанные источники скриптов/стилей</span>
+Content-Security-Policy: default-src 'self'; script-src 'self' cdn.js.com
+
+<span class="cm"># Запрет встройки страницы в iframe (защита от кликджекинга)</span>
+X-Frame-Options: DENY
+
+<span class="cm"># Тип контента не угадывается браузером (защита от MIME-sniffing)</span>
+X-Content-Type-Options: nosniff
+
+<span class="cm"># Управление реферером — сколько информации передаём о своём URL</span>
+Referrer-Policy: strict-origin-when-cross-origin
+
+<span class="cm"># Проверить заголовки сайта через curl:</span>
+<span class="prompt">$</span> curl -I https://github.com
+<span class="prompt">$</span> curl -sI https://google.com | grep -i "strict\|frame\|content-sec"
+
+<span class="cm"># CORS — заголовки для cross-origin запросов</span>
+<span class="cm"># Сервер говорит: "разрешаю запросы с этих доменов"</span>
+Access-Control-Allow-Origin: https://myapp.com   <span class="cm"># конкретный домен</span>
+Access-Control-Allow-Origin: *                   <span class="cm"># все (опасно для API с авторизацией!)</span>
+Access-Control-Allow-Methods: GET, POST, PUT
+Access-Control-Allow-Headers: Content-Type, Authorization
+
+<span class="cm"># Python (Flask): настройка CORS</span>
+<span class="cm"># pip install flask-cors</span>
+<span class="kw">from</span> flask_cors <span class="kw">import</span> CORS
+CORS(app, origins=[<span class="str">"https://myfront.com"</span>])
+
+<span class="cm"># Проверка через Python</span>
+<span class="kw">import</span> requests
+r = requests.<span class="fn">get</span>(<span class="str">"https://example.com"</span>)
+<span class="kw">for</span> h <span class="kw">in</span> [<span class="str">"Strict-Transport-Security"</span>, <span class="str">"X-Frame-Options"</span>, <span class="str">"Content-Security-Policy"</span>]:
+    <span class="fn">print</span>(<span class="str">f"{h}: {r.headers.get(h, '❌ ОТСУТСТВУЕТ')}"</span>)</div>
+      <div class="tip tip-danger"><div class="tip-label">⚠ Access-Control-Allow-Origin: *</div><p>Звёздочка разрешает запросы с ЛЮБОГО домена. Для публичного API без авторизации — ок. Для API с куками или токенами — критическая уязвимость: злоумышленник может делать запросы от имени залогиненного пользователя.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Проверь заголовки безопасности у 5 сайтов через curl -I. Напиши скрипт-аудитор: выводит зелёный ✅ если заголовок есть, красный ❌ если отсутствует. Протестируй: github.com, google.com, любой казахстанский банк. Кто настроен лучше всех?</p></div>
+    </div>
+  </div>
+
+  <!-- MINI PROJECT W2 -->
+  <div class="mini-project">
+    <div class="mp-label">🏆 Мини-проект · День 14</div>
+    <h3>HTTP-клиент на Python (мини-Postman)</h3>
+    <p>Консольный инструмент для отправки HTTP-запросов и анализа ответов.</p>
+    <ul class="checklist">
+      <li>Поддержка методов: GET, POST, PUT, DELETE с телом JSON</li>
+      <li>Вывод: статус-код, заголовки, тело ответа (отформатированный JSON)</li>
+      <li>Замер времени ответа сервера</li>
+      <li>Проверка SSL-сертификата с датой истечения</li>
+      <li>Сохранение истории запросов в файл <code>request_history.json</code></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════ WEEK 3 ═══════════ -->
+<div id="week3" class="week-section w3">
+  <div class="week-header">
+    <div class="week-icon">🚪</div>
+    <div class="week-meta"><h2>Неделя 3 — Порты, протоколы и SSH</h2><p>Дни 15–21 · TCP/UDP, SSH, nmap, NAT · Мини-проект: Портсканер</p></div>
+  </div>
+
+  <!-- D15 -->
+  <div class="day-card" id="d15">
+    <div class="day-head" onclick="toggleCard('d15')">
+      <div class="day-num">15</div><div class="day-title">Порты: что на каком живёт</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d15')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label><p>Порт — числовой идентификатор (0–65535) для разграничения служб на одном IP. Системные порты: 0–1023 (требуют root). Зарегистрированные: 1024–49151. Динамические: 49152–65535.</p></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Порт</th><th>Протокол</th><th>Служба</th><th>ИБ-риск</th></tr></thead>
+        <tbody>
+          <tr><td>21</td><td>FTP</td><td>Передача файлов</td><td>🔴 Высокий (нет шифрования)</td></tr>
+          <tr><td>22</td><td>SSH</td><td>Удалённый доступ</td><td>🟡 Средний (brute-force)</td></tr>
+          <tr><td>23</td><td>Telnet</td><td>Удалённый доступ</td><td>🔴 Критический (plaintext)</td></tr>
+          <tr><td>25</td><td>SMTP</td><td>Отправка почты</td><td>🟡 Спам-риск</td></tr>
+          <tr><td>53</td><td>DNS</td><td>Разрешение имён</td><td>🟡 DNS-spoof, amplification</td></tr>
+          <tr><td>80</td><td>HTTP</td><td>Веб без шифрования</td><td>🔴 MITM-атаки</td></tr>
+          <tr><td>443</td><td>HTTPS</td><td>Зашифрованный веб</td><td>🟢 Безопасен</td></tr>
+          <tr><td>3306</td><td>MySQL</td><td>База данных</td><td>🔴 Не должен быть открыт</td></tr>
+          <tr><td>5432</td><td>PostgreSQL</td><td>База данных</td><td>🔴 Только localhost</td></tr>
+          <tr><td>6379</td><td>Redis</td><td>Кэш/очереди</td><td>🔴 Часто без пароля!</td></tr>
+          <tr><td>8080, 8000</td><td>HTTP alt</td><td>Dev-серверы</td><td>🟡 Не для продакшна</td></tr>
+          <tr><td>27017</td><td>MongoDB</td><td>NoSQL база</td><td>🔴 Много открытых в интернете</td></tr>
+        </tbody>
+      </table></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Используй команду <code>netstat -tulpn</code> (Linux) или <code>netstat -ano</code> (Windows), чтобы увидеть все открытые порты на своей системе. Составь список: порт → служба → нужна ли она? Какие можно закрыть?</p></div>
+    </div>
+  </div>
+
+  <!-- D16 -->
+  <div class="day-card" id="d16">
+    <div class="day-head" onclick="toggleCard('d16')">
+      <div class="day-num">16</div><div class="day-title">TCP vs UDP: надёжность против скорости</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d16')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="table-wrap"><table>
+        <thead><tr><th>Характеристика</th><th>TCP</th><th>UDP</th></tr></thead>
+        <tbody>
+          <tr><td>Соединение</td><td>✅ Устанавливается (handshake)</td><td>❌ Без соединения</td></tr>
+          <tr><td>Надёжность</td><td>✅ Гарантирует доставку</td><td>❌ Нет гарантий</td></tr>
+          <tr><td>Порядок пакетов</td><td>✅ Сохраняется</td><td>❌ Может нарушаться</td></tr>
+          <tr><td>Скорость</td><td>❌ Медленнее (overhead)</td><td>✅ Быстрее</td></tr>
+          <tr><td>Применение</td><td>HTTP, FTP, SMTP, SSH</td><td>DNS, VoIP, видео, игры</td></tr>
+        </tbody>
+      </table></div>
+      <div class="schema"><span class="label">TCP Three-Way Handshake:</span>
+Клиент → <span class="hl">SYN</span> (seq=100) ────────────────→ Сервер
+Клиент ← <span class="hl">SYN-ACK</span> (seq=200, ack=101) ←── Сервер
+Клиент → <span class="hl">ACK</span> (ack=201) ─────────────────→ Сервер
+<span class="arrow">Соединение установлено! Данные передаются.</span></div>
+      <div class="code-block"><span class="cm"># TCP: требует установки соединения</span>
+<span class="kw">import</span> socket
+s = socket.<span class="fn">socket</span>(socket.AF_INET, socket.SOCK_STREAM)  <span class="cm"># TCP</span>
+s.<span class="fn">connect</span>((<span class="str">"google.com"</span>, <span class="num">80</span>))   <span class="cm"># handshake происходит здесь</span>
+s.<span class="fn">send</span>(<span class="str">b"GET / HTTP/1.1\r\nHost: google.com\r\n\r\n"</span>)
+<span class="fn">print</span>(s.<span class="fn">recv</span>(<span class="num">1024</span>).decode()[:200])
+s.close()
+
+<span class="cm"># UDP: без соединения</span>
+s = socket.<span class="fn">socket</span>(socket.AF_INET, socket.SOCK_DGRAM)   <span class="cm"># UDP</span>
+s.<span class="fn">sendto</span>(<span class="str">b"Hello"</span>, (<span class="str">"8.8.8.8"</span>, <span class="num">53</span>))  <span class="cm"># сразу отправляем</span></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Создай TCP-эхо-сервер и клиент: сервер слушает порт 9999, принимает сообщение и отправляет обратно в ВЕРХНЕМ РЕГИСТРЕ. Клиент подключается, вводит строку и выводит ответ. Запусти оба в разных терминалах.</p></div>
+    </div>
+  </div>
+
+  <!-- D17 -->
+  <div class="day-card" id="d17">
+    <div class="day-head" onclick="toggleCard('d17')">
+      <div class="day-num">17</div><div class="day-title">SSH: безопасный удалённый доступ</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d17')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>SSH (Secure Shell) — протокол для безопасного удалённого управления серверами. Шифрует весь трафик. Поддерживает: аутентификацию по паролю, по ключам (безопаснее!), туннелирование портов.</p>
+      </div>
+      <div class="code-block"><span class="cm"># Генерация SSH-ключей</span>
+ssh-keygen -t ed25519 -C "my-server"   <span class="cm"># современный тип ключа</span>
+<span class="cm"># Создаст: ~/.ssh/id_ed25519 (приватный) и ~/.ssh/id_ed25519.pub (публичный)</span>
+
+<span class="cm"># Скопировать ключ на сервер</span>
+ssh-copy-id user@server-ip
+
+<span class="cm"># Подключение</span>
+ssh user@server-ip                      <span class="cm"># по паролю</span>
+ssh -i ~/.ssh/id_ed25519 user@server    <span class="cm"># по ключу</span>
+ssh -p 2222 user@server                 <span class="cm"># нестандартный порт</span>
+
+<span class="cm"># Туннелирование (пробросить localhost:5432 с сервера)</span>
+ssh -L 5432:localhost:5432 user@server
+
+<span class="cm"># Python: SSH через paramiko</span>
+<span class="kw">import</span> paramiko
+client = paramiko.<span class="fn">SSHClient</span>()
+client.<span class="fn">set_missing_host_key_policy</span>(paramiko.AutoAddPolicy())
+client.<span class="fn">connect</span>(<span class="str">"server"</span>, username=<span class="str">"user"</span>, key_filename=<span class="str">"~/.ssh/id_ed25519"</span>)
+stdin, stdout, stderr = client.<span class="fn">exec_command</span>(<span class="str">"df -h"</span>)
+<span class="fn">print</span>(stdout.<span class="fn">read</span>().decode())</div>
+      <div class="tip tip-warn"><div class="tip-label">⚠ Безопасность SSH</div><p>Отключи аутентификацию по паролю (<code>PasswordAuthentication no</code> в /etc/ssh/sshd_config). Измени порт с 22 на нестандартный. Используй fail2ban для защиты от brute-force.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Сгенерируй пару SSH-ключей (ed25519). Найди публичный ключ. Изучи конфиг ~/.ssh/config — как настроить алиасы для серверов. Объясни: чем ed25519 лучше RSA-4096?</p></div>
+    </div>
+  </div>
+
+  <!-- D18-D20 compact -->
+  <div class="day-card" id="d18">
+    <div class="day-head" onclick="toggleCard('d18')">
+      <div class="day-num">18</div><div class="day-title">nmap: разведка и сканирование портов</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d18')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label><p>nmap — главный инструмент сетевой разведки. Определяет открытые порты, службы, версии ПО, ОС. Используется в тестировании на проникновение. <strong style="color:var(--red)">Сканируй только свои системы или с разрешения!</strong></p></div>
+      <div class="code-block"><span class="cm"># Базовое сканирование</span>
+nmap localhost                  <span class="cm"># топ-1000 портов</span>
+nmap -p 1-65535 localhost       <span class="cm"># все порты</span>
+nmap -sV localhost              <span class="cm"># версии служб</span>
+nmap -O localhost               <span class="cm"># определить ОС</span>
+nmap -A localhost               <span class="cm"># всё вместе (-sV -O -sC)</span>
+
+<span class="cm"># Python: простой портсканер</span>
+<span class="kw">import</span> socket
+<span class="kw">def</span> <span class="fn">scan_port</span>(host, port):
+    s = socket.<span class="fn">socket</span>()
+    s.settimeout(<span class="num">0.5</span>)
+    result = s.connect_ex((host, port))
+    s.close()
+    <span class="kw">return</span> result == <span class="num">0</span>
+
+<span class="kw">for</span> port <span class="kw">in</span> [<span class="num">22</span>,<span class="num">80</span>,<span class="num">443</span>,<span class="num">5432</span>,<span class="num">8080</span>]:
+    state = <span class="str">"OPEN"</span> <span class="kw">if</span> <span class="fn">scan_port</span>(<span class="str">"127.0.0.1"</span>, port) <span class="kw">else</span> <span class="str">"closed"</span>
+    <span class="fn">print</span>(<span class="str">f"Port {port}: {state}"</span>)</div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Просканируй 127.0.0.1 (localhost) — какие порты открыты? Напиши многопоточный Python-портсканер (threading) для проверки портов 1–1024 на localhost. Выводи только открытые с именем сервиса.</p></div>
+    </div>
+  </div>
+
+  <!-- D19 -->
+  <div class="day-card" id="d19">
+    <div class="day-head" onclick="toggleCard('d19')">
+      <div class="day-num">19</div><div class="day-title">NAT: как роутер подменяет адреса</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d19')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>NAT (Network Address Translation) — механизм который позволяет тысячам устройств с приватными IP-адресами выходить в интернет через один публичный IP. Роутер подменяет адреса на лету и ведёт таблицу трансляции. Именно поэтому у тебя дома адрес 192.168.x.x, а в интернете ты виден как один IP провайдера.</p>
+      </div>
+      <div class="code-block"><span class="cm"># Типы приватных адресов (RFC 1918) — не маршрутизируются в интернете</span>
+<span class="cm"># 10.0.0.0/8       → крупные корпоративные сети</span>
+<span class="cm"># 172.16.0.0/12    → средние сети</span>
+<span class="cm"># 192.168.0.0/16   → домашние роутеры</span>
+
+<span class="cm"># Как работает NAT (пример):</span>
+<span class="cm"># Твой ПК:   192.168.1.5:54321  →  роутер  →  203.0.113.1:41000  → google.com:443</span>
+<span class="cm"># Ответ:   google.com:443  →  203.0.113.1:41000  →  роутер  →  192.168.1.5:54321</span>
+<span class="cm"># Роутер знает что порт 41000 принадлежит 192.168.1.5:54321 — таблица NAT</span>
+
+<span class="cm"># Узнать свой внешний IP (что видит интернет)</span>
+<span class="prompt">$</span> curl ifconfig.me
+<span class="prompt">$</span> curl ipinfo.io/json
+
+<span class="cm"># Разница: локальный vs внешний</span>
+<span class="prompt">$</span> ip addr show         <span class="cm"># локальный IP (192.168.x.x)</span>
+<span class="prompt">$</span> curl ifconfig.me     <span class="cm"># внешний IP (публичный)</span>
+
+<span class="cm"># Проброс портов (Port Forwarding) — обратное NAT</span>
+<span class="cm"># Задача: сделать твой локальный сервер доступным из интернета</span>
+<span class="cm"># Роутер: "Всё на порт 8080 → перенаправить на 192.168.1.5:80"</span>
+<span class="cm"># Настраивается в веб-интерфейсе роутера: LAN → Port Forwarding</span>
+
+<span class="cm"># Python: определить свой тип NAT (полезно для P2P)</span>
+<span class="kw">import</span> requests
+ext_ip = requests.<span class="fn">get</span>(<span class="str">"https://api.ipify.org"</span>).text
+<span class="fn">print</span>(<span class="str">f"Внешний IP: {ext_ip}"</span>)
+
+<span class="cm"># Типы NAT по строгости:</span>
+<span class="cm"># Full Cone NAT    → самый открытый, легко P2P</span>
+<span class="cm"># Restricted NAT  → только ответы на исходящие</span>
+<span class="cm"># Symmetric NAT   → самый строгий, P2P проблематично (Skype, WebRTC используют STUN)</span></div>
+      <div class="tip tip-info"><div class="tip-label">💡 IPv6 и будущее NAT</div><p>IPv6 даёт каждому устройству уникальный глобальный адрес — NAT теоретически не нужен. Но NAT стал и защитой: устройства за NAT по умолчанию недоступны снаружи. При переходе на IPv6 нужен firewall вместо NAT.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Сравни свой локальный IP (ip addr) и внешний (curl ifconfig.me). Разница — это NAT. Найди в настройках роутера таблицу NAT или раздел Port Forwarding. Напиши Python-скрипт который показывает оба IP и определяет за NAT ли ты.</p></div>
+    </div>
+  </div>
+
+  <!-- D20 -->
+  <div class="day-card" id="d20">
+    <div class="day-head" onclick="toggleCard('d20')">
+      <div class="day-num">20</div><div class="day-title">VPN: как работает туннель</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d20')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>VPN (Virtual Private Network) создаёт зашифрованный туннель между двумя точками. Всё что ты отправляешь — зашифровано и видно только VPN-серверу, а не провайдеру. VPN используют для: безопасного доступа к корпоративной сети, обхода гео-блокировок, защиты в публичных Wi-Fi.</p>
+      </div>
+      <div class="code-block"><span class="cm"># Как работает VPN-туннель:</span>
+<span class="cm"># Без VPN: Твой ПК → (открытый трафик) → Провайдер → Интернет</span>
+<span class="cm"># С VPN:   Твой ПК → (зашифровано) → VPN-сервер → (расшифровано) → Интернет</span>
+<span class="cm"># Провайдер видит только: ты → VPN-сервер. Содержимое — нет.</span>
+
+<span class="cm"># Популярные протоколы VPN:</span>
+<span class="cm"># OpenVPN    → открытый, надёжный, порт 1194/UDP или 443/TCP</span>
+<span class="cm"># WireGuard  → новый, очень быстрый, порт 51820/UDP</span>
+<span class="cm"># IPSec/IKEv2 → корпоративный стандарт</span>
+<span class="cm"># PPTP       → устаревший, небезопасный — не использовать</span>
+
+<span class="cm"># WireGuard — установка на Linux</span>
+<span class="prompt">$</span> sudo apt install wireguard
+<span class="prompt">$</span> wg genkey | tee privatekey | wg pubkey > publickey   <span class="cm"># генерация ключей</span>
+<span class="prompt">$</span> cat privatekey    <span class="cm"># приватный — никому!</span>
+<span class="prompt">$</span> cat publickey     <span class="cm"># публичный — отдаём серверу</span>
+
+<span class="cm"># Конфиг клиента /etc/wireguard/wg0.conf</span>
+[Interface]
+PrivateKey = &lt;твой приватный ключ&gt;
+Address    = 10.0.0.2/24
+DNS        = 1.1.1.1
+
+[Peer]
+PublicKey  = &lt;публичный ключ сервера&gt;
+Endpoint   = vpn.server.com:51820
+AllowedIPs = 0.0.0.0/0       <span class="cm"># весь трафик через VPN</span>
+
+<span class="prompt">$</span> sudo wg-quick up wg0       <span class="cm"># запустить</span>
+<span class="prompt">$</span> sudo wg-quick down wg0     <span class="cm"># остановить</span>
+<span class="prompt">$</span> sudo wg show               <span class="cm"># статус туннеля</span>
+
+<span class="cm"># Проверить что VPN работает</span>
+<span class="prompt">$</span> curl ifconfig.me           <span class="cm"># должен показать IP VPN-сервера</span></div>
+      <div class="tip tip-info"><div class="tip-label">💡 Split tunneling</div><p>Split tunneling — режим VPN когда только часть трафика идёт через туннель. Например, корпоративные ресурсы — через VPN, YouTube — напрямую. Настраивается через AllowedIPs в WireGuard: вместо 0.0.0.0/0 указываешь конкретные подсети.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Объясни своими словами: что видит провайдер когда ты используешь VPN? Чем WireGuard лучше OpenVPN? Если есть VPS — установи WireGuard и подключись. Напиши Python-скрипт который проверяет изменился ли внешний IP до/после подключения VPN.</p></div>
+    </div>
+  </div>
+
+  <!-- D21 -->
+  <div class="day-card" id="d21">
+    <div class="day-head" onclick="toggleCard('d21')">
+      <div class="day-num">21</div><div class="day-title">Сниффинг сети: tcpdump без Wireshark</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d21')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>tcpdump — консольный анализатор трафика, доступен на любом Linux-сервере где Wireshark не установишь. Незаменим при отладке сетевых проблем в продакшне: посмотреть реальные пакеты, проверить что запрос дошёл, убедиться что фаервол не режет трафик.</p>
+      </div>
+      <div class="code-block"><span class="cm"># Базовый захват</span>
+<span class="prompt">$</span> sudo tcpdump -i eth0             <span class="cm"># весь трафик на интерфейсе</span>
+<span class="prompt">$</span> sudo tcpdump -i any              <span class="cm"># все интерфейсы</span>
+<span class="prompt">$</span> sudo tcpdump -i eth0 -n          <span class="cm"># без резолва имён (быстрее)</span>
+<span class="prompt">$</span> sudo tcpdump -i eth0 -c 100      <span class="cm"># захватить 100 пакетов и выйти</span>
+
+<span class="cm"># Фильтры (BPF — Berkeley Packet Filter)</span>
+<span class="prompt">$</span> sudo tcpdump host 8.8.8.8        <span class="cm"># трафик к/от конкретного хоста</span>
+<span class="prompt">$</span> sudo tcpdump port 80             <span class="cm"># HTTP-трафик</span>
+<span class="prompt">$</span> sudo tcpdump port 443            <span class="cm"># HTTPS (зашифрован — видны только метаданные)</span>
+<span class="prompt">$</span> sudo tcpdump tcp                 <span class="cm"># только TCP</span>
+<span class="prompt">$</span> sudo tcpdump udp port 53         <span class="cm"># DNS-запросы</span>
+
+<span class="cm"># Комбинированные фильтры</span>
+<span class="prompt">$</span> sudo tcpdump host 1.2.3.4 and port 80
+<span class="prompt">$</span> sudo tcpdump port 80 or port 443
+<span class="prompt">$</span> sudo tcpdump not port 22         <span class="cm"># весь трафик кроме SSH</span>
+
+<span class="cm"># Сохранить в файл для анализа в Wireshark</span>
+<span class="prompt">$</span> sudo tcpdump -i eth0 -w capture.pcap
+<span class="prompt">$</span> sudo tcpdump -r capture.pcap     <span class="cm"># читать из файла</span>
+
+<span class="cm"># Показать содержимое пакетов (ASCII)</span>
+<span class="prompt">$</span> sudo tcpdump -i eth0 port 80 -A  <span class="cm"># текстовое содержимое</span>
+<span class="prompt">$</span> sudo tcpdump -i eth0 port 80 -X  <span class="cm"># hex + ASCII</span>
+
+<span class="cm"># Диагностика DNS</span>
+<span class="prompt">$</span> sudo tcpdump udp port 53 -n -v   <span class="cm"># наблюдать DNS-запросы в реальном времени</span>
+<span class="cm"># В другом терминале: dig google.com → видишь UDP-пакет в tcpdump</span></div>
+      <div class="tip tip-warn"><div class="tip-label">⚠ Только на своих системах</div><p>Захват чужого трафика без разрешения — уголовное преступление. tcpdump используется только для диагностики своих серверов и сетей, в учебных средах (VM, localhost) или с явного разрешения владельца.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Запусти <code>sudo tcpdump udp port 53 -n</code> и в другом терминале делай dig/nslookup — наблюдай DNS-запросы. Захвати HTTP-трафик (порт 80) и найди в нём заголовки запроса. Сохрани захват в .pcap файл и открой в Wireshark для сравнения интерфейсов.</p></div>
+    </div>
+  </div>
+
+  <!-- MINI PROJECT W3 -->
+  <div class="mini-project">
+    <div class="mp-label">🏆 Мини-проект · День 21</div>
+    <h3>Многопоточный портсканер</h3>
+    <p>Профессиональный инструмент сканирования (только для своих систем!).</p>
+    <ul class="checklist">
+      <li>Сканирование диапазона портов в 100 потоков через <code>ThreadPoolExecutor</code></li>
+      <li>Определение названия сервиса через <code>socket.getservbyport()</code></li>
+      <li>Попытка захватить banner (ответ службы для идентификации версии)</li>
+      <li>Вывод таблицы: порт, статус, сервис, banner</li>
+      <li>Сохранение результата в JSON и HTML-отчёт</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════ WEEK 4 ═══════════ -->
+<div id="week4" class="week-section w4">
+  <div class="week-header">
+    <div class="week-icon">🔍</div>
+    <div class="week-meta"><h2>Неделя 4 — Wireshark и информационная безопасность</h2><p>Дни 22–30 · Анализ трафика, атаки, защита · Финальный проект</p></div>
+  </div>
+
+  <!-- D22 -->
+  <div class="day-card" id="d22">
+    <div class="day-head" onclick="toggleCard('d22')">
+      <div class="day-num">22</div><div class="day-title">Wireshark: захват и анализ трафика</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d22')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label><p>Wireshark — анализатор сетевых пакетов. Перехватывает весь трафик через сетевой интерфейс. Показывает каждый пакет: протокол, содержимое, временные метки. Незаменим при отладке сетевых проблем и ИБ-расследованиях.</p></div>
+      <div class="section-row"><label>Интерфейс Wireshark</label>
+        <div class="schema"><span class="label">Панель пакетов (сверху):</span>
+No.  Time      Source          Destination     Protocol  Length  Info
+<span class="hl">1</span>    0.000000  192.168.1.5     8.8.8.8         <span class="hl">DNS</span>       73      Standard query A google.com
+<span class="hl">2</span>    0.032451  8.8.8.8         192.168.1.5     <span class="hl">DNS</span>       89      Standard query response A 142.250.74.46
+<span class="hl">3</span>    0.033100  192.168.1.5     142.250.74.46   <span class="hl">TCP</span>       66      54321→443 [SYN]
+<span class="hl">4</span>    0.069200  142.250.74.46   192.168.1.5     <span class="hl">TCP</span>       66      443→54321 [SYN,ACK]</div>
+      </div>
+      <div class="code-block"><span class="cm"># Полезные фильтры Wireshark</span>
+ip.addr == 8.8.8.8           <span class="cm"># трафик конкретного IP</span>
+tcp.port == 443              <span class="cm"># только HTTPS</span>
+http                         <span class="cm"># только HTTP</span>
+dns                          <span class="cm"># только DNS-запросы</span>
+http.request.method == "POST" <span class="cm"># POST-запросы</span>
+tcp.flags.syn == 1           <span class="cm"># SYN-пакеты</span>
+frame contains "password"    <span class="cm"># ищет слово в пакетах</span>
+!(arp or icmp)               <span class="cm"># исключить ARP и ping</span></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Установи Wireshark. Запусти захват. Открой в браузере http://example.com (HTTP, не HTTPS). Найди в Wireshark: DNS-запрос, TCP-handshake (SYN→SYN-ACK→ACK), HTTP GET-запрос. Посмотри содержимое пакетов.</p></div>
+    </div>
+  </div>
+
+  <!-- D23 -->
+  <div class="day-card" id="d23">
+    <div class="day-head" onclick="toggleCard('d23')">
+      <div class="day-num">23</div><div class="day-title">TCP Handshake и анализ соединений</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d23')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label><p>В Wireshark ты видишь каждый этап установки TCP-соединения. Это важно для понимания атак типа SYN-flood и отладки проблем с подключением.</p></div>
+      <div class="schema"><span class="label">TCP Handshake в деталях:</span>
+[SYN]     Клиент → Сервер: "Хочу подключиться, мой seq=1000"
+[SYN-ACK] Сервер → Клиент: "ОК, мой seq=5000, подтверждаю твой ack=1001"
+[ACK]     Клиент → Сервер: "Подтверждаю твой ack=5001"
+<span class="arrow">→ Соединение открыто</span>
+
+<span class="label">Закрытие соединения (FIN-ACK):</span>
+[FIN]     Клиент → Сервер: "Хочу закрыть"
+[ACK]     Сервер → Клиент: "ОК"
+[FIN]     Сервер → Клиент: "Я тоже закрываю"
+[ACK]     Клиент → Сервер: "ОК"</div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>В Wireshark используй фильтр <code>tcp.flags.syn == 1</code>. Найди полный handshake (SYN → SYN-ACK → ACK) для любого соединения. Нажми правую кнопку → «Follow TCP Stream» — увидишь весь разговор клиента и сервера.</p></div>
+    </div>
+  </div>
+
+  <!-- D24 -->
+  <div class="day-card" id="d24">
+    <div class="day-head" onclick="toggleCard('d24')">
+      <div class="day-num">24</div><div class="day-title">Анализ HTTP в Wireshark: запросы и ответы</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d24')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>HTTP (незашифрованный) в Wireshark виден целиком — заголовки, тело, куки. Это наглядно объясняет почему HTTPS обязателен. HTTPS-трафик зашифрован, но метаданные (IP, порты, размер пакетов, SNI — имя домена) видны. Умение читать HTTP в Wireshark — ключевой навык отладки и ИБ.</p>
+      </div>
+      <div class="code-block"><span class="cm"># Фильтры Wireshark для HTTP</span>
+http                              <span class="cm">-- все HTTP пакеты</span>
+http.request                      <span class="cm">-- только запросы</span>
+http.response                     <span class="cm">-- только ответы</span>
+http.request.method == "POST"     <span class="cm">-- только POST</span>
+http.response.code == 404         <span class="cm">-- все 404</span>
+http.host == "example.com"        <span class="cm">-- трафик к конкретному хосту</span>
+
+<span class="cm"># Анализ запроса в Wireshark — что видно в панели деталей:</span>
+<span class="cm"># ▶ Hypertext Transfer Protocol</span>
+<span class="cm">#   GET /api/users HTTP/1.1\r\n</span>
+<span class="cm">#   Host: api.example.com\r\n</span>
+<span class="cm">#   Cookie: session=abc123\r\n   ← видно в открытом HTTP!</span>
+<span class="cm">#   Authorization: Bearer token\r\n  ← тоже видно!</span>
+
+<span class="cm"># Follow HTTP Stream — читать весь разговор</span>
+<span class="cm"># ПКМ на пакет → Follow → HTTP Stream</span>
+<span class="cm"># Красный = клиент → сервер</span>
+<span class="cm"># Синий  = сервер → клиент</span>
+
+<span class="cm"># Экспорт объектов — скачать файлы из трафика</span>
+<span class="cm"># File → Export Objects → HTTP</span>
+<span class="cm"># Wireshark покажет список картинок, JS, JSON из перехваченного трафика</span>
+
+<span class="cm"># HTTPS — что видно и что нет:</span>
+tls                               <span class="cm">-- TLS handshake пакеты</span>
+tls.handshake.type == 1           <span class="cm">-- ClientHello</span>
+<span class="cm"># В ClientHello видно: SNI (имя домена), версия TLS, cipher suites</span>
+<span class="cm"># НЕ видно: заголовки, тело, куки, токены</span></div>
+      <div class="tip tip-danger"><div class="tip-label">🔒 Почему HTTP = катастрофа</div><p>В публичном Wi-Fi любой может запустить Wireshark и читать все твои HTTP-запросы: логины, пароли, токены сессий. Один <code>http.request.method == "POST"</code> фильтр — и видны все формы. Всегда HTTPS.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Запусти Wireshark, открой любой HTTP-сайт (не HTTPS) и найди запросы фильтром <code>http</code>. Открой «Follow HTTP Stream» и прочитай заголовки. Попробуй фильтр <code>http.response.code == 200</code>. Сравни: что видно в HTTPS-трафике (tls) vs HTTP?</p></div>
+    </div>
+  </div>
+
+  <!-- D25 -->
+  <div class="day-card" id="d25">
+    <div class="day-head" onclick="toggleCard('d25')">
+      <div class="day-num">25</div><div class="day-title">Firewall: принципы блокировки трафика</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d25')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label><p>Firewall (межсетевой экран) фильтрует трафик по правилам: IP-адрес, порт, протокол, направление. Linux: <code>iptables</code> или современный <code>ufw</code>. Принцип «запрещено всё, что не разрешено».</p></div>
+      <div class="code-block"><span class="cm"># UFW (Uncomplicated Firewall) — Ubuntu</span>
+sudo ufw enable               <span class="cm"># включить</span>
+sudo ufw status verbose        <span class="cm"># текущие правила</span>
+sudo ufw allow 22             <span class="cm"># разрешить SSH</span>
+sudo ufw allow 80/tcp         <span class="cm"># разрешить HTTP</span>
+sudo ufw allow 443/tcp        <span class="cm"># разрешить HTTPS</span>
+sudo ufw deny 3306            <span class="cm"># запретить MySQL извне</span>
+sudo ufw allow from 192.168.1.0/24 to any port 5432  <span class="cm"># PostgreSQL только из локалки</span>
+
+<span class="cm"># Базовые правила безопасного сервера:</span>
+<span class="cm"># 1. Заблокируй всё по умолчанию</span>
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+<span class="cm"># 2. Открой только нужные порты</span>
+sudo ufw allow 22 443 80</div>
+      <div class="tip tip-info"><div class="tip-label">💡 Для backend-разработчика</div><p>Базы данных (PostgreSQL :5432, MySQL :3306, Redis :6379, MongoDB :27017) никогда не должны быть открыты в интернет. Только <code>localhost</code> или внутренняя сеть. Это одна из самых частых ошибок, которая приводит к утечкам данных.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Напиши 5 правил UFW для защиты типичного веб-сервера: открыть только SSH (22), HTTP (80), HTTPS (443). Запретить доступ к PostgreSQL из интернета. Разрешить PostgreSQL только с IP 10.0.0.5 (условный сервер приложений).</p></div>
+    </div>
+  </div>
+
+  <!-- D26 -->
+  <div class="day-card" id="d26">
+    <div class="day-head" onclick="toggleCard('d26')">
+      <div class="day-num">26</div><div class="day-title">Proxy и reverse proxy: nginx как привратник</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d26')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>Прямой прокси (forward proxy) стоит между клиентами и интернетом — скрывает клиентов. Обратный прокси (reverse proxy) стоит перед серверами — скрывает серверы. Nginx как reverse proxy — стандарт для production: принимает все запросы, проксирует на backend, отдаёт SSL, сжимает, кеширует.</p>
+      </div>
+      <div class="code-block"><span class="cm"># Прямой прокси: клиент → прокси → интернет</span>
+<span class="cm"># Клиент говорит прокси куда идти — прокси делает запрос от своего имени</span>
+<span class="cm"># Применения: корпоративный фильтр, кеш, анонимизация</span>
+
+<span class="cm"># Обратный прокси: интернет → nginx → backend</span>
+<span class="cm"># Клиент не знает что за nginx — видит только один IP</span>
+
+<span class="cm"># Конфиг nginx как reverse proxy (Flask на порту 5000)</span>
+server {
+    listen 80;
+    server_name myapp.com;
+
+    location / {
+        proxy_pass         http://127.0.0.1:5000;     <span class="cm"># куда проксировать</span>
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;   <span class="cm"># реальный IP клиента</span>
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /static/ {
+        root /var/www/myapp;                          <span class="cm"># статику отдаём сами</span>
+        expires 30d;                                  <span class="cm"># кеш браузера</span>
+    }
+}
+
+<span class="cm"># SSL-терминация: nginx расшифровывает HTTPS, передаёт HTTP на backend</span>
+server {
+    listen 443 ssl;
+    ssl_certificate     /etc/letsencrypt/live/myapp.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/myapp.com/privkey.pem;
+    ...
+}
+
+<span class="cm"># Load balancing: nginx распределяет запросы между несколькими backend</span>
+upstream backend {
+    server 127.0.0.1:5001;
+    server 127.0.0.1:5002;
+    server 127.0.0.1:5003;
+}
+location / { proxy_pass http://backend; }</div>
+      <div class="tip tip-info"><div class="tip-label">💡 Зачем reverse proxy backend-разработчику</div><p>Твоё Flask/Django/FastAPI приложение не должно напрямую слушать порт 80/443 — это задача nginx. Nginx отдаёт статику быстрее, управляет SSL, защищает от медленных клиентов (slow-read атаки), делает rate limiting. Это стандартная связка в production.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Установи nginx на своём сервере/VM. Создай минимальное Flask-приложение (hello world). Настрой nginx как reverse proxy: запросы на 80 → Flask на 5000. Проверь что X-Real-IP передаётся корректно. Добавь обслуживание статики через nginx напрямую.</p></div>
+    </div>
+  </div>
+
+  <!-- D27 -->
+  <div class="day-card" id="d27">
+    <div class="day-head" onclick="toggleCard('d27')">
+      <div class="day-num">27</div><div class="day-title">Сетевые атаки: MITM, спуфинг, перехват</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d27')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>MITM (Man-In-The-Middle) — класс атак когда злоумышленник встаёт между двумя общающимися сторонами. Классика в локальных сетях через ARP-спуфинг. DNS-спуфинг перенаправляет на поддельные сайты. IP-спуфинг подделывает адрес отправителя. Знание атак необходимо для понимания защит.</p>
+      </div>
+      <div class="code-block"><span class="cm"># Виды атак и защита от каждой:</span>
+
+<span class="cm">┌─────────────────┬─────────────────────────────┬──────────────────────────────┐</span>
+<span class="cm">│ Атака           │ Механизм                    │ Защита                       │</span>
+<span class="cm">├─────────────────┼─────────────────────────────┼──────────────────────────────┤</span>
+<span class="cm">│ ARP Spoofing    │ Фиктивные ARP-ответы        │ DAI на коммутаторе, HTTPS    │</span>
+<span class="cm">│ DNS Spoofing    │ Подмена DNS-ответов         │ DNSSEC, DoH (DNS over HTTPS) │</span>
+<span class="cm">│ SSL Stripping   │ Принудительный HTTP         │ HSTS, preloading             │</span>
+<span class="cm">│ IP Spoofing     │ Подмена src IP в пакете     │ BCP38, RPF на роутере        │</span>
+<span class="cm">│ Session Hijack  │ Кража куки сессии           │ Secure/HttpOnly flags, HTTPS │</span>
+<span class="cm">└─────────────────┴─────────────────────────────┴──────────────────────────────┘</span>
+
+<span class="cm"># Проверить защищён ли сайт от SSL Stripping</span>
+<span class="prompt">$</span> curl -I http://google.com          <span class="cm"># должен вернуть 301 → HTTPS</span>
+<span class="prompt">$</span> curl -sI https://google.com | grep -i hsts
+<span class="cm"># strict-transport-security: max-age=31536000 ← HSTS активен</span>
+
+<span class="cm"># DNSSEC — проверить что домен подписан</span>
+<span class="prompt">$</span> dig +dnssec google.com            <span class="cm"># в ответе будет RRSIG</span>
+<span class="prompt">$</span> delv @8.8.8.8 google.com          <span class="cm"># полная верификация DNSSEC</span>
+
+<span class="cm"># DNS over HTTPS — защита DNS от перехвата</span>
+<span class="cm"># Запрос идёт зашифрованным HTTPS на 1.1.1.1 или 8.8.8.8</span>
+<span class="cm"># Провайдер не видит какие домены ты запрашиваешь</span>
+
+<span class="cm"># Проверить куки на защитные флаги (в браузере: DevTools → Application → Cookies)</span>
+<span class="cm"># Secure  — кука передаётся только по HTTPS</span>
+<span class="cm"># HttpOnly — недоступна из JavaScript (защита от XSS)</span>
+<span class="cm"># SameSite — защита от CSRF</span></div>
+      <div class="tip tip-warn"><div class="tip-label">⚠ Только образовательно</div><p>Эти атаки рассматриваются исключительно для понимания как защититься. Выполнять MITM-атаки на чужих сетях и устройствах — уголовное преступление. Учебные эксперименты — только в изолированных VM или с явного согласия владельца.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Проверь 5 сайтов на наличие HSTS. Есть ли у банков Казахстана HSTS preloading? Проверь куки через DevTools — есть ли Secure и HttpOnly флаги? Проверь один сайт на DNSSEC через dig +dnssec. Составь таблицу: что защищено, что нет.</p></div>
+    </div>
+  </div>
+
+  <!-- D28 -->
+  <div class="day-card" id="d28">
+    <div class="day-head" onclick="toggleCard('d28')">
+      <div class="day-num">28</div><div class="day-title">DoS и DDoS атаки: теория и защита</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d28')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label><p>DoS (Denial of Service) — атака направленная на недоступность сервиса путём перегрузки ресурсов. DDoS — то же но с тысяч устройств (ботнет). SYN-flood: отправка миллионов SYN-пакетов без завершения handshake, исчерпывает ресурсы сервера.</p></div>
+      <div class="schema"><span class="label">SYN-flood атака:</span>
+Атакующий (ботнет) → [SYN] → Сервер создаёт half-open соединение
+Атакующий (ботнет) → [SYN] → Сервер создаёт ещё...
+Атакующий (ботнет) → [SYN] → ещё... ещё... ещё...
+<span class="arrow">→ Сервер исчерпал очередь соединений → легитимные запросы отклоняются</span>
+
+<span class="label">Защита SYN-cookies (решение):</span>
+Сервер не хранит состояние до получения ACK
+Вместо этого кодирует информацию в SYN-ACK (sequence number)
+Если ACK приходит — декодирует и создаёт соединение
+<span class="arrow">→ Полуоткрытые соединения не занимают память</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Тип атаки</th><th>Механизм</th><th>Защита</th></tr></thead>
+        <tbody>
+          <tr><td>SYN-flood</td><td>Поток SYN без ACK</td><td>SYN cookies, rate limiting</td></tr>
+          <tr><td>UDP flood</td><td>Поток UDP-пакетов</td><td>Firewall, rate limiting</td></tr>
+          <tr><td>HTTP flood</td><td>Легитимные GET/POST</td><td>WAF, CAPTCHA, rate limiting</td></tr>
+          <tr><td>Amplification</td><td>Усиление через DNS/NTP</td><td>BCP38, rate limiting</td></tr>
+          <tr><td>Slowloris</td><td>Медленные HTTP-запросы</td><td>Таймауты, лимит соединений</td></tr>
+        </tbody>
+      </table></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Опиши механизм защиты от SYN-flood через SYN cookies (своими словами). Как rate limiting в nginx защищает от HTTP flood? Напиши конфиг nginx с лимитом 10 запросов в секунду с одного IP.</p></div>
+    </div>
+  </div>
+
+  <!-- D29 -->
+  <div class="day-card" id="d29">
+    <div class="day-head" onclick="toggleCard('d29')">
+      <div class="day-num">29</div><div class="day-title">CDN: как ускорить доставку контента</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d29')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что изучить</label>
+        <p>CDN (Content Delivery Network) — сеть серверов по всему миру. Пользователь получает контент с ближайшего к нему сервера, а не с основного. Это сокращает задержку, разгружает origin-сервер и защищает от DDoS. Cloudflare, AWS CloudFront, Fastly — крупнейшие CDN провайдеры.</p>
+      </div>
+      <div class="code-block"><span class="cm"># Как CDN ускоряет загрузку:</span>
+<span class="cm"># Без CDN: Алматы → сервер в Лондоне → 250ms latency</span>
+<span class="cm"># С CDN:   Алматы → CDN-узел в Алмате или Москве → 20ms latency</span>
+
+<span class="cm"># Что кешируется в CDN:</span>
+<span class="cm"># ✅ Статика: картинки, JS, CSS, шрифты, PDF</span>
+<span class="cm"># ✅ Публичные API-ответы (с Cache-Control: public, max-age=3600)</span>
+<span class="cm"># ❌ Персонализированные ответы, куки, авторизованные запросы</span>
+
+<span class="cm"># HTTP-заголовки управляют кешированием</span>
+Cache-Control: public, max-age=86400        <span class="cm">-- CDN кешировать 24 часа</span>
+Cache-Control: private, no-cache           <span class="cm">-- CDN не кешировать</span>
+Cache-Control: s-maxage=3600               <span class="cm">-- для CDN (shared cache)</span>
+
+<span class="cm"># Диагностика: определить CDN по заголовкам</span>
+<span class="prompt">$</span> curl -sI https://github.com | grep -i "cf-\|x-cache\|via\|age"
+<span class="cm"># X-Cache: HIT ← контент из кеша CDN</span>
+<span class="cm"># CF-Cache-Status: HIT ← Cloudflare кеш</span>
+<span class="cm"># Age: 3600 ← сколько секунд в кеше</span>
+
+<span class="cm"># Узнать через какой CDN идёт сайт</span>
+<span class="prompt">$</span> dig github.com                           <span class="cm"># видим IP CDN, не оригинального сервера</span>
+<span class="prompt">$</span> curl -sI https://github.com | grep server
+<span class="cm"># server: cloudflare  ← CDN провайдер</span>
+
+<span class="cm"># Cloudflare дополнительно защищает от DDoS:</span>
+<span class="cm"># Фильтрует трафик прежде чем он доходит до твоего сервера</span>
+<span class="cm"># Rate limiting, WAF (Web Application Firewall), bot protection</span>
+
+<span class="cm"># Python: проверка заголовков кеша</span>
+<span class="kw">import</span> requests
+r = requests.<span class="fn">get</span>(<span class="str">"https://github.com"</span>)
+<span class="fn">print</span>(r.headers.get(<span class="str">"CF-Cache-Status"</span>, <span class="str">"No Cloudflare"</span>))
+<span class="fn">print</span>(r.headers.get(<span class="str">"Cache-Control"</span>, <span class="str">"No cache policy"</span>))</div>
+      <div class="tip tip-info"><div class="tip-label">💡 Cloudflare бесплатный план</div><p>Cloudflare Free tier даёт CDN + DDoS-защиту + SSL — бесплатно. Для небольшого проекта это мгновенное ускорение и защита. Просто меняешь NS-записи домена на Cloudflare — и трафик идёт через них.</p></div>
+      <div class="task-box"><div class="task-label">Задача дня</div><p>Напиши Python-скрипт который проверяет 5-10 популярных сайтов и определяет: используют ли они CDN, какой провайдер, есть ли кеш (X-Cache, CF-Cache-Status). Сравни latency через ping до IP сайта с CDN и без (если найдёшь оригинальный IP).</p></div>
+    </div>
+  </div>
+
+  <!-- D30 -->
+  <div class="day-card" id="d30">
+    <div class="day-head" onclick="toggleCard('d30')">
+      <div class="day-num">30</div><div class="day-title">Итог курса: путь от браузера до сервера</div>
+      <div class="day-check" onclick="event.stopPropagation();markDone('d30')">✓</div><div class="day-arrow">▶</div>
+    </div>
+    <div class="day-body">
+      <div class="section-row"><label>Что происходит когда ты вводишь URL</label>
+        <p>За миллисекунды между нажатием Enter и появлением страницы происходят десятки сетевых операций. Теперь ты знаешь каждую из них.</p>
+      </div>
+      <div class="schema">
+<span class="label">1. DNS-резолвинг</span>
+browser cache → OS cache → /etc/hosts → Recursive DNS → Root NS → TLD NS → Auth NS
+→ IP получен, кешируется по TTL
+
+<span class="label">2. TCP-соединение (3-way handshake)</span>
+SYN → SYN-ACK → ACK
+→ Соединение установлено
+
+<span class="label">3. TLS Handshake (если HTTPS)</span>
+ClientHello → ServerHello → Certificate → Key Exchange → Finished
+→ Шифрованный канал установлен
+
+<span class="label">4. HTTP-запрос</span>
+GET / HTTP/1.1
+Host: example.com
+→ Через CDN → Firewall → nginx (reverse proxy) → Backend
+
+<span class="label">5. HTTP-ответ</span>
+200 OK + Headers + HTML
+→ Браузер рендерит, загружает CSS/JS/картинки (дополнительные запросы)
+
+<span class="label">6. Закрытие соединения</span>
+FIN → FIN-ACK → ACK (или Keep-Alive для переиспользования)
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Неделя</th><th>Навыки</th><th>Статус</th></tr></thead>
+        <tbody>
+          <tr><td>W1 · Основы сети</td><td>OSI, TCP/IP, IP, подсети, ping, traceroute, ARP</td><td style="color:var(--accent)">✓ Пройдено</td></tr>
+          <tr><td>W2 · Веб-протоколы</td><td>DNS, HTTP, HTTPS, заголовки безопасности, CORS</td><td style="color:var(--accent)">✓ Пройдено</td></tr>
+          <tr><td>W3 · Порты и туннели</td><td>TCP/UDP, SSH, nmap, NAT, VPN, tcpdump</td><td style="color:var(--accent)">✓ Пройдено</td></tr>
+          <tr><td>W4 · Безопасность</td><td>Wireshark, Firewall, proxy, атаки, DDoS, CDN</td><td style="color:var(--accent)">✓ Пройдено</td></tr>
+        </tbody>
+      </table></div>
+      <div class="section-row"><label>Что дальше</label>
+        <div class="code-block"><span class="cm"># Следующие шаги:</span>
+
+<span class="hl">1. CEH / CompTIA Security+</span>
+<span class="cm">   → Сертификация по основам кибербезопасности</span>
+
+<span class="hl">2. TryHackMe / HackTheBox</span>
+<span class="cm">   → Практические CTF-задачи по сетевой безопасности</span>
+
+<span class="hl">3. Написать свой HTTP-сервер на сокетах</span>
+<span class="cm">   → Понять HTTP изнутри — лучший способ его знать</span>
+
+<span class="hl">4. Kubernetes networking</span>
+<span class="cm">   → Service mesh, Ingress, CNI плагины</span>
+
+<span class="hl">5. BGP и устройство интернета</span>
+<span class="cm">   → Как автономные системы обмениваются маршрутами</span></div>
+      </div>
+      <div class="tip tip-info"><div class="tip-label">🎯 Совет для Backend-разработчика</div><p>Возьми любой свой проект и пройди по нему полный путь: DNS, SSL, nginx конфиг, заголовки безопасности, файрволл. Проверь headers через securityheaders.com. Захвати трафик Wireshark и найди TCP handshake своего приложения. Это лучшее закрепление курса.</p></div>
+      <div class="task-box"><div class="task-label">Финальная задача</div><p>Объясни голосом или текстом другу что происходит когда он открывает сайт — от DNS до рендеринга. Используй все термины курса. Если можешь объяснить понятно — ты действительно понял сети. Запиши свой ответ в файл <code>networks_summary.md</code>.</p></div>
+    </div>
+  </div>
+
+  <!-- FINAL PROJECT -->
+  <div class="mini-project">
+    <div class="mp-label">🎓 Финальный проект · День 30</div>
+    <h3>Полный анализ пути данных: браузер → сервер</h3>
+    <p>Проведи полное исследование и напиши технический отчёт.</p>
+    <ul class="checklist">
+      <li>Захвати в Wireshark полный цикл: DNS-запрос → TCP-handshake → HTTP-запрос → HTTP-ответ</li>
+      <li>Напиши Python-скрипт который делает то же самое программно (socket + DNS)</li>
+      <li>Проанализируй заголовки безопасности целевого сайта (HSTS, CSP, X-Frame-Options)</li>
+      <li>Проверь SSL-сертификат: кто выдал, срок действия, тип шифрования</li>
+      <li>Составь отчёт: слабые места в безопасности конфигурации сервера</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">
+  Компьютерные сети · 30 дней · Backend & Cybersecurity · <span>2025</span>
+</div>
+</div>
+
+<script>
+const KEY='net30_v1';
+let done=JSON.parse(localStorage.getItem(KEY)||'[]');
+function markDone(id){
+  const card=document.getElementById(id);
+  if(done.includes(id)){done=done.filter(d=>d!==id);card.classList.remove('done');}
+  else{done.push(id);card.classList.add('done');}
+  localStorage.setItem(KEY,JSON.stringify(done));
+  updateProgress();
+}
+function updateProgress(){
+  const pct=Math.round(done.length/30*100);
+  document.getElementById('prog-val').textContent=pct+'%';
+  document.getElementById('bar').style.width=pct+'%';
+  document.getElementById('done-count').textContent=done.length;
+}
+function toggleCard(id){document.getElementById(id).classList.toggle('open');}
+function toggleAnswer(btn){
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('show');
+}
+function showWeek(n){
+  document.querySelectorAll('.week-section').forEach(s=>s.classList.remove('show'));
+  document.getElementById('week'+n).classList.add('show');
+  document.querySelectorAll('.wnav').forEach(b=>b.className='wnav');
+  document.querySelectorAll('.wnav')[n-1].classList.add('aw'+n);
+}
+done.forEach(id=>{const c=document.getElementById(id);if(c)c.classList.add('done');});
+updateProgress();
+</script>
+</body>
+</html>
